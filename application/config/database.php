@@ -26,7 +26,7 @@ $query_builder = TRUE;
 // 	'save_queries' => TRUE
 // );
 $db['default'] = array(
-	'dsn'	=> ENV['JAWSDB_MARIA_URL'],
+	'dsn'	=> $ENV['JAWSDB_MARIA_URL'],
 	'dbdriver' => 'mysqli',
 	'dbprefix' => '',
 	'pconnect' => TRUE,
