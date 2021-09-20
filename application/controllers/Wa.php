@@ -22,7 +22,6 @@ class Wa extends CI_Controller
 
     function index(){
         echo 'This controller for WhatsApp usage';
-        $no="081288643757";
     }
     public function formatingNumber($no){
         if(substr($no, 0, 2)=="62"){return $no;}
@@ -110,7 +109,7 @@ class Wa extends CI_Controller
     }
     
     public function receivingInMsg() {
-        if(!isset($_POST)){die();}
+        if(json_decode(file_get_contents('php://input'))==null){die();}
         $data=json_decode(file_get_contents('php://input'))->results;
         foreach ($data as $val) {
             $msg= $val->message;
@@ -134,6 +133,14 @@ class Wa extends CI_Controller
 
                 }
             }
+        }
+    }
+
+    public function endConversation() {
+        if(!isset($_GET['nikadm']) || !isset($_GET['no']) || isset($_GET['idadmin'])){echo json_encode(["status"=>"Bad request"])}
+        else
+        {
+            $now=new DateTime('NOW');
         }
     }    
 }
