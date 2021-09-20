@@ -1,0 +1,16 @@
+{
+	"description": "The CodeIgniter framework",
+	"name": "codeigniter/framework",
+	"type": "project",
+	"homepage": "https://codeigniter.com",
+	"license": "MIT",
+	"minimum-stability":"stable",
+	"require": {
+		"php": ">=5.2.4",
+		"phpoffice/phpspreadsheet": "^1.17",
+		
+		"spatie/async": "^1.5",
+		"vlucas/phpdotenv": "^5.3",
+		"firebase/php-jwt": "^5.3"
+	}
+}

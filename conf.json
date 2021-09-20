@@ -1,0 +1,7 @@
+{
+	"ACCESS_TOKEN_SECRET":"dGFueWFzYWxvbW8=",
+    "TOPIC_NAME1": "Leads",
+    "TOPIC_NAME2": "ReturnLeads",
+
+    "SERVER_ADD":"localhost:9092"
+}
