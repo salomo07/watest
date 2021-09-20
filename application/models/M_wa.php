@@ -3,7 +3,7 @@
 class M_wa extends CI_Model {
     function __construct() {
         parent::__construct();
-        $this->db=$this->load->database('staging', TRUE);
+        // $this->db=$this->load->database('staging', TRUE);
     }
 
     function insertConversation($data) {
