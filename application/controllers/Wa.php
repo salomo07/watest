@@ -139,7 +139,7 @@ class Wa extends CI_Controller
     }
 
     public function endConversation() {
-        if(!isset($_GET['nikadm']) || !isset($_GET['no']) || isset($_GET['idadmin'])){echo json_encode(["status"=>"Bad request"])}
+        if(!isset($_GET['nikadm']) || !isset($_GET['no'])){echo json_encode(["status"=>"Bad request"]);}
         else
         {
             $now=new DateTime('NOW');
