@@ -17,7 +17,6 @@ class Wa extends CI_Controller
         $this->ADIRA_NUMBER=base64_decode($this->conf->ADIRA_NUMBER);
         date_default_timezone_set("Asia/Jakarta");
         $this->load->model('M_wa');
-
     }
 
     function index(){
@@ -100,7 +99,25 @@ class Wa extends CI_Controller
             $this->sendingTextMsg($no,$this->M_wa->getMsg('greet')->message);
         }
     }
+    public function adminSend() {
+        if(!isset($_GET['no']) || !isset($_GET['text'])){echo json_encode(["status"=>"Bad request"]);die();}
+        $to=$_GET['no'];
+        $text=$_GET['text'];
+        $ch = curl_init($this->BASE_URL.'whatsapp/1/message/text');
+        curl_setopt($ch, CURLOPT_HTTPHEADER, array(
+            'Authorization: App '.$this->API_KEY,
+            'Content-Type: application/json'
+        ));
 
+        curl_setopt($ch, CURLOPT_POST ,TRUE);
+        curl_setopt($ch, CURLOPT_POSTFIELDS ,json_encode(["from"=>$this->ADIRA_NUMBER,"to"=>$this->formatingNumber($to),"content"=>["text"=>$text]]));
+        try{
+            $result=curl_exec($ch);
+        }
+        catch(Exception $e){
+            // echo json_encode($e);
+        }
+    }
     public function getMsg() {
         if(isset($_GET['keyword']) && isset($_GET['no'])){
             $keyword=strtolower(urldecode($_GET['keyword']));
