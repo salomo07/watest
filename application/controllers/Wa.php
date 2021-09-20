@@ -110,6 +110,7 @@ class Wa extends CI_Controller
     }
     
     public function receivingInMsg() {
+        if(!isset($_POST)){die();}
         $data=json_decode(file_get_contents('php://input'))->results;
         foreach ($data as $val) {
             $msg= $val->message;
