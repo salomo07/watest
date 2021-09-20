@@ -110,27 +110,29 @@ class Wa extends CI_Controller
     
     public function receivingInMsg() {
         if(json_decode(file_get_contents('php://input'))==null){die();}
-        $data=json_decode(file_get_contents('php://input'))->results;
-        foreach ($data as $val) {
-            $msg= $val->message;
-            $allowedType = array("TEXT","IMAGE","DOCUMENT");
-            if(!in_array($msg->type, $allowedType))
-            {
-                $this->sendingTextMsg($val->from,"Sahabat Adira, \nMohon maaf, format pesan yang diperbolehkan hanya berupa Text, Image dan Document.");
-            }
-            else{
-                if($msg->type=="TEXT")
+        else{
+            $data=json_decode(file_get_contents('php://input'))->results;
+            foreach ($data as $val) {
+                $msg= $val->message;
+                $allowedType = array("TEXT","IMAGE","DOCUMENT");
+                if(!in_array($msg->type, $allowedType))
                 {
-                    if($this->M_wa->checkActiveConversation($val->from)!=null) //Jika percakapan sudah aktif
+                    $this->sendingTextMsg($val->from,"Sahabat Adira, \nMohon maaf, format pesan yang diperbolehkan hanya berupa Text, Image dan Document.");
+                }
+                else{
+                    if($msg->type=="TEXT")
                     {
-                        $this->sendingTextMsg($val->from,"Percakapan telah dimulai, setelah tahap ini saya serahkan ke Intelix.");
-                    }
-                    else // Belum ada percakapan, masuk ke bot
-                    {
-                        $this->tree($msg->text,$val->from);
-                    }
-                }else if($msg->type=="IMAGE"){
+                        if($this->M_wa->checkActiveConversation($val->from)!=null) //Jika percakapan sudah aktif
+                        {
+                            $this->sendingTextMsg($val->from,"Percakapan telah dimulai, setelah tahap ini saya serahkan ke Intelix.");
+                        }
+                        else // Belum ada percakapan, masuk ke bot
+                        {
+                            $this->tree($msg->text,$val->from);
+                        }
+                    }else if($msg->type=="IMAGE"){
 
+                    }
                 }
             }
         }
