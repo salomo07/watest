@@ -10,7 +10,8 @@ class M_wa extends CI_Model {
         $this->db->insert('active_conversation', $data);
     }
     function updateConversation($data) {
-        $this->db->where('number', $data['number']);
+        $where="number='$data["number"]' and endtime is null";
+        $this->db->where($where);
         $this->db->update('active_conversation', $data);
     }
     function checkActiveConversation($no) {
