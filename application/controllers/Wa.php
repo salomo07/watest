@@ -143,7 +143,7 @@ class Wa extends CI_Controller
         else
         {
             $now=new DateTime('NOW');
-            $this->M_wa->updateConversation(["number"=>$_GET['no'],"nik"=>$_GET['nik'],"endtime"=>$now]);
+            $this->M_wa->updateConversation(["number"=>$_GET['no'],"nik"=>$_GET['nik'],"endtime"=>$now->format('c')]);
             $this->sendingTextMsg($this->formatingNumber($_GET['no']),$this->M_wa->getMsg('end')->message);
         }
     }    
