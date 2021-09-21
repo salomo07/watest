@@ -137,7 +137,7 @@ class Wa extends CI_Controller
                 else{
                     if($msg->type=="TEXT")
                     {
-                        if($msg->text=="*out"){$this->sendingTextMsg($this->formatingNumber($val->from),$this->M_wa->getMsg('end')->message);die();}
+                        if($msg->text=="*out"){$this->sendingTextMsg($this->formatingNumber($val->from),$val->from);$this->M_wa->updateConversation(["number"=>$val->from,"nik"=>"Ended by user","endtime"=>$now->format('c')]);die();}
                         else if($this->M_wa->checkActiveConversation($val->from)!=null) //Jika percakapan sudah aktif
                         {
                             $this->sendingTextMsg($val->from,"Percakapan telah dimulai, setelah tahap ini saya serahkan ke Intelix.");
@@ -154,10 +154,10 @@ class Wa extends CI_Controller
         }
     }
 
-    public function endConversation($noo,$nik) {
-        if(isset($_GET['nik'])){$nik=isset($_GET['nik']);$noo=isset($_GET['no']);}
+    public function endConversation() {
+        if(!isset($_GET['no'])&&!isset($_GET['nik'])){die();}
         $now=new DateTime('NOW');
-        $this->M_wa->updateConversation(["number"=>$noo,"nik"=>$nik,"endtime"=>$now->format('c')]);
-        $this->sendingTextMsg($this->formatingNumber($noo),$this->M_wa->getMsg('end')->message);
+        $this->M_wa->updateConversation(["number"=>$_GET['no'],"nik"=>$_GET['nik'],"endtime"=>$now->format('c')]);
+        $this->sendingTextMsg($this->formatingNumber($_GET['no']),$this->M_wa->getMsg('end')->message);
     }    
 }
