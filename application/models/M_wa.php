@@ -9,9 +9,9 @@ class M_wa extends CI_Model {
         $this->db->insert('active_conversation', $data);
     }
     function updateConversation($data) {
-        $no;$endtime=$data['endtime'];$nik=$data['nik'];
         if(substr($data["number"], 0, 2)=="62"){$no="0".substr($data["number"], 2);}
-        $this->db->query("update active_conversation set endtime='$endtime', nik='$nik' where number='$no' and endtime IS NULL");
+        $this->db->where("number ='$no' and endtime is null");
+        $this->db->update('active_conversation', $data);
     }
     function checkActiveConversation($no) {
         if(substr($no, 0, 2)=="62"){$no="0".substr($no, 2);}
