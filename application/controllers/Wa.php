@@ -49,6 +49,9 @@ class Wa extends CI_Controller
         $arrCall = array("call", "hubungi", "petugas", "hubungi petugas adira finance","chat","cs");
         $arrDoc = array("dok", "dokumen");
 
+        if($input=="out"){
+            $this->sendingTextMsg($no,$this->M_wa->getMsg('end')->message); die();
+        }
         if(in_array($input, $arrCall)) // Jika pesan berisi keyword seperti dalam array
         {
             $user=$this->M_wa->getLeads($no); // Check to database from leads
@@ -72,10 +75,6 @@ class Wa extends CI_Controller
         {
             // echo json_encode(["status"=>"sending","message"=>$this->M_wa->getMsg('greet')->message]);
             $this->sendingTextMsg($no,$this->M_wa->getMsg('greet')->message);
-        }
-        else if($input=="out")
-        {
-            $this->sendingTextMsg($this->formatingNumber($_GET['no']),"Out");
         }
         else if(in_array($input, $arrDoc))
         {
