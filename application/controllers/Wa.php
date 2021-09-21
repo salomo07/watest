@@ -73,6 +73,11 @@ class Wa extends CI_Controller
             // echo json_encode(["status"=>"sending","message"=>$this->M_wa->getMsg('greet')->message]);
             $this->sendingTextMsg($no,$this->M_wa->getMsg('greet')->message);
         }
+        else if($input=="out")
+        {
+            $_GET['nik']="by customer";$_GET['no']=$no;
+            $this->endConversation();
+        }
         else if(in_array($input, $arrDoc))
         {
             $user=$this->M_wa->getLeads($no); // Check to database from leads
