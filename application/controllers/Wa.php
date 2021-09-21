@@ -49,6 +49,11 @@ class Wa extends CI_Controller
         $arrCall = array("call", "hubungi", "petugas", "hubungi petugas adira finance","chat","cs");
         $arrDoc = array("dok", "dokumen");
 
+        if($input=="out")
+        {
+            $_GET['nik']="by customer";$_GET['no']=$no;
+            $this->endConversation();die();
+        }
         if(in_array($input, $arrCall)) // Jika pesan berisi keyword seperti dalam array
         {
             $user=$this->M_wa->getLeads($no); // Check to database from leads
@@ -70,13 +75,7 @@ class Wa extends CI_Controller
         }
         else if(in_array($input, $arrGreet))
         {
-            // echo json_encode(["status"=>"sending","message"=>$this->M_wa->getMsg('greet')->message]);
             $this->sendingTextMsg($no,$this->M_wa->getMsg('greet')->message);
-        }
-        else if($input=="out")
-        {
-            $_GET['nik']="by customer";$_GET['no']=$no;
-            $this->endConversation();
         }
         else if(in_array($input, $arrDoc))
         {
@@ -160,8 +159,10 @@ class Wa extends CI_Controller
         }
     }
 
-    public function endConversation() {
+    public function endConversation($noo,$nik) {
+
         if(!isset($_GET['nik']) || !isset($_GET['no'])){echo json_encode(["status"=>"Bad request"]);}
+        else if(isset($noo) && isset($nik)){}
         else
         {
             $now=new DateTime('NOW');
