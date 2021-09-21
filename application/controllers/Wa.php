@@ -49,10 +49,6 @@ class Wa extends CI_Controller
         $arrCall = array("call", "hubungi", "petugas", "hubungi petugas adira finance","chat","cs");
         $arrDoc = array("dok", "dokumen");
 
-        if($input=="out")
-        {
-            $this->endConversation($no,"by customer");die();
-        }
         if(in_array($input, $arrCall)) // Jika pesan berisi keyword seperti dalam array
         {
             $user=$this->M_wa->getLeads($no); // Check to database from leads
@@ -74,7 +70,12 @@ class Wa extends CI_Controller
         }
         else if(in_array($input, $arrGreet))
         {
+            // echo json_encode(["status"=>"sending","message"=>$this->M_wa->getMsg('greet')->message]);
             $this->sendingTextMsg($no,$this->M_wa->getMsg('greet')->message);
+        }
+        else if($input=="out")
+        {
+            $this->sendingTextMsg($this->formatingNumber($_GET['no']),"Out");
         }
         else if(in_array($input, $arrDoc))
         {
@@ -98,6 +99,7 @@ class Wa extends CI_Controller
         }
         else {
             // Exception jika keyword tidak dikenali, akan memunculkan menu
+            // echo json_encode(["status"=>"sending","message"=>$this->M_wa->getMsg('greet')->message]);
             $this->sendingTextMsg($no,$this->M_wa->getMsg('greet')->message);
         }
     }
@@ -157,16 +159,13 @@ class Wa extends CI_Controller
         }
     }
 
-    public function endConversation($noo,$nik) {
-        if(isset($_GET['nik']) && isset($_GET['no'])){$nik=$_GET['nik'];$noo=$_GET['no'];}
-        $now=new DateTime('NOW');
-        $this->M_wa->updateConversation(["number"=>$noo,"nik"=>$nik,"endtime"=>$now->format('c')]);
-        $this->sendingTextMsg($this->formatingNumber($noo),$this->M_wa->getMsg('end')->message);
-        // else
-        // {
-        //     $now=new DateTime('NOW');
-        //     $this->M_wa->updateConversation(["number"=>$noo,"nik"=>$nik,"endtime"=>$now->format('c')]);
-        //     $this->sendingTextMsg($this->formatingNumber($noo),$this->M_wa->getMsg('end')->message);
-        // }
+    public function endConversation() {
+        if(!isset($_GET['nik']) || !isset($_GET['no'])){echo json_encode(["status"=>"Bad request"]);}
+        else
+        {
+            $now=new DateTime('NOW');
+            $this->M_wa->updateConversation(["number"=>$_GET['no'],"nik"=>$_GET['nik'],"endtime"=>$now->format('c')]);
+            $this->sendingTextMsg($this->formatingNumber($_GET['no']),$this->M_wa->getMsg('end')->message);
+        }
     }    
 }
