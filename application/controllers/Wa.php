@@ -126,6 +126,7 @@ class Wa extends CI_Controller
     public function receivingInMsg() {
         if(json_decode(file_get_contents('php://input'))==null){die();}
         else{
+            $now=new DateTime('NOW');
             $data=json_decode(file_get_contents('php://input'))->results;
             foreach ($data as $val) {
                 $msg= $val->message;
@@ -137,11 +138,10 @@ class Wa extends CI_Controller
                 else{
                     if($msg->type=="TEXT")
                     {
-                        if($msg->text=="*out")
+                        if($msg->text=="#out")
                         {
-                            $this->sendingTextMsg($this->formatingNumber($val->from),$val->from);
+                            $this->sendingTextMsg($this->formatingNumber($val->from),"End by client");
                             $this->M_wa->updateConversation(["number"=>$val->from,"nik"=>"Ended by user","endtime"=>$now->format('c')]);
-                            die();
                         }
                         else if($this->M_wa->checkActiveConversation($val->from)!=null) //Jika percakapan sudah aktif
                         {
