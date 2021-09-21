@@ -137,7 +137,7 @@ class Wa extends CI_Controller
                 else{
                     if($msg->type=="TEXT")
                     {
-                        if($msg->text=="*out"){$this->endConversation($no,"bycustomer");die();}
+                        if($msg->text=="*out"){$this->sendingTextMsg($this->formatingNumber($val->from),$this->M_wa->getMsg('end')->message);die();}
                         else if($this->M_wa->checkActiveConversation($val->from)!=null) //Jika percakapan sudah aktif
                         {
                             $this->sendingTextMsg($val->from,"Percakapan telah dimulai, setelah tahap ini saya serahkan ke Intelix.");
