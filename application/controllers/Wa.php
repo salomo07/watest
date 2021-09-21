@@ -159,13 +159,13 @@ class Wa extends CI_Controller
     }
 
     public function endConversation($noo,$nik) {
-        if(isset($noo) && isset($nik)){$_GET['nik']=$nik;$_GET['no']=$noo;}
+        if(isset($_GET['nik']) || isset($_GET['no']){$nik=$_GET['nik'];$noo=$_GET['no'];}
         if(!isset($_GET['nik']) || !isset($_GET['no'])){echo json_encode(["status"=>"Bad request"]);}
         else
         {
             $now=new DateTime('NOW');
-            $this->M_wa->updateConversation(["number"=>$_GET['no'],"nik"=>$_GET['nik'],"endtime"=>$now->format('c')]);
-            $this->sendingTextMsg($this->formatingNumber($_GET['no']),$this->M_wa->getMsg('end')->message);
+            $this->M_wa->updateConversation(["number"=>$noo,"nik"=>$nik,"endtime"=>$now->format('c')]);
+            $this->sendingTextMsg($this->formatingNumber($noo),$this->M_wa->getMsg('end')->message);
         }
     }    
 }
