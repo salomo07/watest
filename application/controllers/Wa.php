@@ -50,8 +50,8 @@ class Wa extends CI_Controller
         $arrDoc = array("dok", "dokumen");
 
         if($input=="out"){
-            $this->sendingTextMsg($no,$this->M_wa->getMsg('end')->message); die();
-        }
+            $this->sendingTextMsg($no,$this->M_wa->getMsg('end')->message);
+        }else
         if(in_array($input, $arrCall)) // Jika pesan berisi keyword seperti dalam array
         {
             $user=$this->M_wa->getLeads($no); // Check to database from leads
