@@ -48,10 +48,10 @@ class Wa extends CI_Controller
         $arrGreet = array("hai", "halo","hallo","selamat pagi", "selamat siang","selamat sore","selamat malam","menu");
         $arrCall = array("call", "hubungi", "petugas", "hubungi petugas adira finance","chat","cs");
         $arrDoc = array("dok", "dokumen");
-
-        if($input=="out"){
-            $this->sendingTextMsg($no,$this->M_wa->getMsg('end')->message);
-        }else
+        if($input=="*out")
+        {
+            $this->endConversation($no,"bycustomer");die();
+        }
         if(in_array($input, $arrCall)) // Jika pesan berisi keyword seperti dalam array
         {
             $user=$this->M_wa->getLeads($no); // Check to database from leads
@@ -98,7 +98,6 @@ class Wa extends CI_Controller
         }
         else {
             // Exception jika keyword tidak dikenali, akan memunculkan menu
-            // echo json_encode(["status"=>"sending","message"=>$this->M_wa->getMsg('greet')->message]);
             $this->sendingTextMsg($no,$this->M_wa->getMsg('greet')->message);
         }
     }
@@ -142,7 +141,7 @@ class Wa extends CI_Controller
                 else{
                     if($msg->type=="TEXT")
                     {
-                        if($this->M_wa->checkActiveConversation($val->from)!=null) //Jika percakapan sudah aktif
+                        if($this->M_wa->checkActiveConversation($val->from)!=null && $msg->text!="*out") //Jika percakapan sudah aktif
                         {
                             $this->sendingTextMsg($val->from,"Percakapan telah dimulai, setelah tahap ini saya serahkan ke Intelix.");
                         }
@@ -158,13 +157,14 @@ class Wa extends CI_Controller
         }
     }
 
-    public function endConversation() {
+    public function endConversation($noo,$nik) {
         if(!isset($_GET['nik']) || !isset($_GET['no'])){echo json_encode(["status"=>"Bad request"]);}
         else
         {
+            if(isset($_GET['nik'])){$nik=isset($_GET['nik']);$noo=isset($_GET['no']);}
             $now=new DateTime('NOW');
-            $this->M_wa->updateConversation(["number"=>$_GET['no'],"nik"=>$_GET['nik'],"endtime"=>$now->format('c')]);
-            $this->sendingTextMsg($this->formatingNumber($_GET['no']),$this->M_wa->getMsg('end')->message);
+            $this->M_wa->updateConversation(["number"=>$noo,"nik"=>$nik,"endtime"=>$now->format('c')]);
+            $this->sendingTextMsg($this->formatingNumber($noo),$this->M_wa->getMsg('end')->message);
         }
     }    
 }
