@@ -51,8 +51,7 @@ class Wa extends CI_Controller
 
         if($input=="out")
         {
-            $_GET['nik']="by customer";$_GET['no']=$no;
-            $this->endConversation();die();
+            $this->endConversation($no,"by customer");die();
         }
         if(in_array($input, $arrCall)) // Jika pesan berisi keyword seperti dalam array
         {
