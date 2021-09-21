@@ -48,10 +48,6 @@ class Wa extends CI_Controller
         $arrGreet = array("hai", "halo","hallo","selamat pagi", "selamat siang","selamat sore","selamat malam","menu");
         $arrCall = array("call", "hubungi", "petugas", "hubungi petugas adira finance","chat","cs");
         $arrDoc = array("dok", "dokumen");
-        if($input=="*out")
-        {
-            $this->endConversation($no,"bycustomer");die();
-        }
         if(in_array($input, $arrCall)) // Jika pesan berisi keyword seperti dalam array
         {
             $user=$this->M_wa->getLeads($no); // Check to database from leads
@@ -141,7 +137,8 @@ class Wa extends CI_Controller
                 else{
                     if($msg->type=="TEXT")
                     {
-                        if($this->M_wa->checkActiveConversation($val->from)!=null && $msg->text!="*out") //Jika percakapan sudah aktif
+                        if($msg->text!="*out"){$this->endConversation($no,"bycustomer");die();}
+                        else if($this->M_wa->checkActiveConversation($val->from)!=null) //Jika percakapan sudah aktif
                         {
                             $this->sendingTextMsg($val->from,"Percakapan telah dimulai, setelah tahap ini saya serahkan ke Intelix.");
                         }
