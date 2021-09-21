@@ -3,14 +3,14 @@
 class M_wa extends CI_Model {
     function __construct() {
         parent::__construct();
-        // $this->db=$this->load->database('staging', TRUE);
     }
 
     function insertConversation($data) {
         $this->db->insert('active_conversation', $data);
     }
     function updateConversation($data) {
-        $where="number='$data["number"]' and endtime is null";
+        $number=$data["number"];
+        $where="number='$number' and endtime is null";
         $this->db->where($where);
         $this->db->update('active_conversation', $data);
     }
