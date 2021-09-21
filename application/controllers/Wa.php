@@ -98,7 +98,6 @@ class Wa extends CI_Controller
         }
         else {
             // Exception jika keyword tidak dikenali, akan memunculkan menu
-            // echo json_encode(["status"=>"sending","message"=>$this->M_wa->getMsg('greet')->message]);
             $this->sendingTextMsg($no,$this->M_wa->getMsg('greet')->message);
         }
     }
@@ -160,11 +159,14 @@ class Wa extends CI_Controller
 
     public function endConversation($noo,$nik) {
         if(isset($_GET['nik']) && isset($_GET['no'])){$nik=$_GET['nik'];$noo=$_GET['no'];}
-        else
-        {
-            $now=new DateTime('NOW');
-            $this->M_wa->updateConversation(["number"=>$noo,"nik"=>$nik,"endtime"=>$now->format('c')]);
-            $this->sendingTextMsg($this->formatingNumber($noo),$this->M_wa->getMsg('end')->message);
-        }
+        $now=new DateTime('NOW');
+        $this->M_wa->updateConversation(["number"=>$noo,"nik"=>$nik,"endtime"=>$now->format('c')]);
+        $this->sendingTextMsg($this->formatingNumber($noo),$this->M_wa->getMsg('end')->message);
+        // else
+        // {
+        //     $now=new DateTime('NOW');
+        //     $this->M_wa->updateConversation(["number"=>$noo,"nik"=>$nik,"endtime"=>$now->format('c')]);
+        //     $this->sendingTextMsg($this->formatingNumber($noo),$this->M_wa->getMsg('end')->message);
+        // }
     }    
 }
