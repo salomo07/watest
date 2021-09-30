@@ -148,14 +148,14 @@ class Wa extends CI_Controller
             $data=json_decode(file_get_contents('php://input'))->results;
             foreach ($data as $val) {
                 $msg= $val->message;
-                $allowedType = array("TEXT","IMAGE","DOCUMENT","REPLY");
-                $this->sendingTextMsg($val->from,$msg->type);
+                $allowedType = array("TEXT","IMAGE","DOCUMENT","INTERACTIVE_BUTTON_REPLY");
+                // $this->sendingTextMsg($val->from,$msg->type);
                 if(!in_array($msg->type, $allowedType))
                 {
                     $this->sendingTextMsg($val->from,"Sahabat Adira, \nMohon maaf, format pesan yang diperbolehkan hanya berupa Text, Image dan Document.");
                 }
                 else{
-                    if($msg->type=="REPLY")
+                    if($msg->type=="INTERACTIVE_BUTTON_REPLY")
                     {
                         $this->tree($msg->text,$val->from);
                     }
