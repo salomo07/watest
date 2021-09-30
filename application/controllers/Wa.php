@@ -126,20 +126,34 @@ class Wa extends CI_Controller
         }
     }
     public function sendInteractiveBtn($to,$text,$arrButton) {
-        $ch = curl_init($this->BASE_URL.'whatsapp/1/message/interactive/buttons');
+        $ch = curl_init($this->BASE_URL.'whatsapp/1/message/text');
         curl_setopt($ch, CURLOPT_HTTPHEADER, array(
             'Authorization: App '.$this->API_KEY,
             'Content-Type: application/json'
         ));
 
         curl_setopt($ch, CURLOPT_POST ,TRUE);
-        curl_setopt($ch, CURLOPT_POSTFIELDS ,json_encode(["from"=>$this->ADIRA_NUMBER,"to"=>$this->formatingNumber($to),"content"=>["body"=>["text"=>$text],"action"=>["buttons"=>$arrButton]]]));
+        curl_setopt($ch, CURLOPT_POSTFIELDS ,json_encode(["from"=>$this->ADIRA_NUMBER,"to"=>$this->formatingNumber($to),"content"=>["text"=>$text]]));
         try{
             $result=curl_exec($ch);
         }
         catch(Exception $e){
             // echo json_encode($e);
         }
+        // $ch = curl_init($this->BASE_URL.'whatsapp/1/message/interactive/buttons');
+        // curl_setopt($ch, CURLOPT_HTTPHEADER, array(
+        //     'Authorization: App '.$this->API_KEY,
+        //     'Content-Type: application/json'
+        // ));
+
+        // curl_setopt($ch, CURLOPT_POST ,TRUE);
+        // curl_setopt($ch, CURLOPT_POSTFIELDS ,json_encode(["from"=>$this->ADIRA_NUMBER,"to"=>$this->formatingNumber($to),"content"=>["body"=>["text"=>$text],"action"=>["buttons"=>$arrButton]]]));
+        // try{
+        //     $result=curl_exec($ch);
+        // }
+        // catch(Exception $e){
+        //     // echo json_encode($e);
+        // }
     }
     public function receivingInMsg() {
         if(json_decode(file_get_contents('php://input'))==null){die();}
