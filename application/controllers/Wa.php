@@ -45,7 +45,7 @@ class Wa extends CI_Controller
     }
     public function tree($input,$no) {
         $input=strtolower(urldecode($input));
-        $this->sendingTextMsg($no,$input);
+        $this->sendingTextMsg($input,$no);
         $now=new DateTime('NOW');
         $arrGreet = array("hai", "halo","hallo","selamat pagi", "selamat siang","selamat sore","selamat malam","menu","hi");
         $arrCall = array("call", "hubungi", "petugas", "hubungi petugas adira finance","chat","cs");
