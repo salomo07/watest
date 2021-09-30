@@ -148,7 +148,7 @@ class Wa extends CI_Controller
             $data=json_decode(file_get_contents('php://input'))->results;
             foreach ($data as $val) {
                 $msg= $val->message;
-                $allowedType = array("TEXT","IMAGE","DOCUMENT");
+                $allowedType = array("TEXT","IMAGE","DOCUMENT","REPLY");
                 if(!in_array($msg->type, $allowedType))
                 {
                     $this->sendingTextMsg($val->from,"Sahabat Adira, \nMohon maaf, format pesan yang diperbolehkan hanya berupa Text, Image dan Document.");
