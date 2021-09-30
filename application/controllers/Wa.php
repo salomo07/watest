@@ -45,7 +45,6 @@ class Wa extends CI_Controller
     }
     public function tree($input,$no) {
         $input=strtolower(urldecode($input));
-        $this->sendingTextMsg($no,$input);
         $now=new DateTime('NOW');
         $arrGreet = array("hai", "halo","hallo","selamat pagi", "selamat siang","selamat sore","selamat malam","menu","hi");
         $arrCall = array("call", "hubungi", "petugas", "hubungi petugas adira finance","chat","cs");
@@ -155,7 +154,7 @@ class Wa extends CI_Controller
                     $this->sendingTextMsg($val->from,"Sahabat Adira, \nMohon maaf, format pesan yang diperbolehkan hanya berupa Text, Image dan Document.");
                 }
                 else{
-                    
+
                     if($msg->type=="INTERACTIVE_BUTTON_REPLY"){
                         $this->tree($msg->title,$val->from);
                     }
