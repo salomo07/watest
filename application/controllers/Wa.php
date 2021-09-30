@@ -149,7 +149,7 @@ class Wa extends CI_Controller
             foreach ($data as $val) {
                 $msg= $val->message;
                 $allowedType = array("TEXT","IMAGE","DOCUMENT","INTERACTIVE_BUTTON_REPLY");
-                // $this->sendingTextMsg($val->from,$msg->type);
+                $this->sendingTextMsg($val->from,$msg->text);
                 if(!in_array($msg->type, $allowedType))
                 {
                     $this->sendingTextMsg($val->from,"Sahabat Adira, \nMohon maaf, format pesan yang diperbolehkan hanya berupa Text, Image dan Document.");
