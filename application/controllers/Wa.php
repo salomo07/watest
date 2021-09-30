@@ -157,7 +157,7 @@ class Wa extends CI_Controller
                 }
                 else{
                     $this->sendingTextMsg($this->formatingNumber($val->from),$msg->text);
-                    $this->sendingTextMsg($this->formatingNumber($val->from),"End by client ".json_encode($msg->text));
+                    $this->sendingTextMsg($this->formatingNumber($val->from),"End by client ".json_encode($val));
                     if($msg->type=="TEXT" || $msg->type=="INTERACTIVE_BUTTON_REPLY")
                     {
                         if($msg->text=="#out")
