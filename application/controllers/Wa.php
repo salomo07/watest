@@ -156,11 +156,8 @@ class Wa extends CI_Controller
                     $this->sendingTextMsg($val->from,"Sahabat Adira, \nMohon maaf, format pesan yang diperbolehkan hanya berupa Text, Image dan Document.");
                 }
                 else{
-                    if($msg->type=="INTERACTIVE_BUTTON_REPLY")
-                    {
-                        $this->tree($msg->text,$val->from);
-                    }
-                    else if($msg->type=="TEXT")
+
+                    if($msg->type=="TEXT" || $msg->type=="INTERACTIVE_BUTTON_REPLY")
                     {
                         if($msg->text=="#out")
                         {
