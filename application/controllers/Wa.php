@@ -126,20 +126,6 @@ class Wa extends CI_Controller
         }
     }
     public function sendInteractiveBtn($to,$text,$arrButton) {
-        // $ch = curl_init($this->BASE_URL.'whatsapp/1/message/text');
-        // curl_setopt($ch, CURLOPT_HTTPHEADER, array(
-        //     'Authorization: App '.$this->API_KEY,
-        //     'Content-Type: application/json'
-        // ));
-
-        // curl_setopt($ch, CURLOPT_POST ,TRUE);
-        // curl_setopt($ch, CURLOPT_POSTFIELDS ,json_encode(["from"=>$this->ADIRA_NUMBER,"to"=>$this->formatingNumber($to),"content"=>["text"=>$text]]));
-        // try{
-        //     $result=curl_exec($ch);
-        // }
-        // catch(Exception $e){
-        //     // echo json_encode($e);
-        // }
         $ch = curl_init($this->BASE_URL.'whatsapp/1/message/interactive/buttons');
         curl_setopt($ch, CURLOPT_HTTPHEADER, array(
             'Authorization: App '.$this->API_KEY,
@@ -168,7 +154,11 @@ class Wa extends CI_Controller
                     $this->sendingTextMsg($val->from,"Sahabat Adira, \nMohon maaf, format pesan yang diperbolehkan hanya berupa Text, Image dan Document.");
                 }
                 else{
-                    if($msg->type=="TEXT")
+                    if($msg->type=="REPLY")
+                    {
+                        $this->tree($msg->text,$val->from);
+                    }
+                    else if($msg->type=="TEXT")
                     {
                         if($msg->text=="#out")
                         {
