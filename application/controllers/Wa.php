@@ -155,8 +155,7 @@ class Wa extends CI_Controller
                     $this->sendingTextMsg($val->from,"Sahabat Adira, \nMohon maaf, format pesan yang diperbolehkan hanya berupa Text, Image dan Document.");
                 }
                 else{
-                    $this->sendingTextMsg($this->formatingNumber($val->from),$msg->text);
-                    $this->sendingTextMsg($this->formatingNumber($val->from),"End by client ".json_encode($val));
+                    
                     if($msg->type=="INTERACTIVE_BUTTON_REPLY"){
                         $this->tree($msg->title,$val->from);
                     }
