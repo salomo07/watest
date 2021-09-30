@@ -45,7 +45,7 @@ class Wa extends CI_Controller
     public function tree($input,$no) {
         $input=strtolower(urldecode($input));
         $now=new DateTime('NOW');
-        $arrGreet = array("hai", "halo","hallo","selamat pagi", "selamat siang","selamat sore","selamat malam","menu");
+        $arrGreet = array("hai", "halo","hallo","selamat pagi", "selamat siang","selamat sore","selamat malam","menu","hi");
         $arrCall = array("call", "hubungi", "petugas", "hubungi petugas adira finance","chat","cs");
         $arrDoc = array("dok", "dokumen");
         if(in_array($input, $arrCall)) // Jika pesan berisi keyword seperti dalam array
