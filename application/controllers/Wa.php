@@ -20,6 +20,7 @@ class Wa extends CI_Controller
     }
 
     function index(){
+        echo json_encode(["from"=>$this->ADIRA_NUMBER,"to"=>"","content"=>["body"=>["text"=>"WWW"],"action"=>["buttons"=>[]]]]);
         echo 'This controller for WhatsApp usage';
     }
     public function formatingNumber($no){
