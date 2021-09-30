@@ -18,6 +18,10 @@ class M_wa extends CI_Model {
         $query= $this->db->query("select * from active_conversation where number='$no' and endtime IS NULL");
         return $query->row();
     }
+    function checkIdMsg($id) {
+        $query= $this->db->query("select message from keywords where keyword='$keyword'");
+        return $query->row();
+    }
     function getMsg($keyword) {
         $query= $this->db->query("select message from keywords where keyword='$keyword'");
         return $query->row();

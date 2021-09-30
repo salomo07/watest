@@ -71,6 +71,8 @@ class Wa extends CI_Controller
         {
             // echo json_encode(["status"=>"sending","message"=>$this->M_wa->getMsg('greet')->message]);
             $this->sendingTextMsg($no,$this->M_wa->getMsg('greet')->message);
+            $arrButton=[["type"=>"Dokumen","title"=>"Dokumen"],["type"=>"Chat","title"=>"Chat"]];
+            $this->sendInteractiveBtn($no,$this->M_wa->getMsg('greet')->message,$arrButton);
         }
         else if(in_array($input, $arrDoc))
         {
@@ -122,7 +124,22 @@ class Wa extends CI_Controller
             $this->tree($keyword,$_GET['no']);
         }
     }
-    
+    public function sendInteractiveBtn($to,$text,$arrButton) {
+        $ch = curl_init($this->BASE_URL.'whatsapp/1/message/interactive/buttons');
+        curl_setopt($ch, CURLOPT_HTTPHEADER, array(
+            'Authorization: App '.$this->API_KEY,
+            'Content-Type: application/json'
+        ));
+
+        curl_setopt($ch, CURLOPT_POST ,TRUE);
+        curl_setopt($ch, CURLOPT_POSTFIELDS ,json_encode(["from"=>$this->ADIRA_NUMBER,"to"=>$this->formatingNumber($to),"content"=>["body"=>["text"=>$text],"action"=>["buttons"=>$arrButton]]]));
+        try{
+            $result=curl_exec($ch);
+        }
+        catch(Exception $e){
+            // echo json_encode($e);
+        }
+    }
     public function receivingInMsg() {
         if(json_decode(file_get_contents('php://input'))==null){die();}
         else{
