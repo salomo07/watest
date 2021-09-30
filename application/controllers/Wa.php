@@ -72,7 +72,7 @@ class Wa extends CI_Controller
         {
             // echo json_encode(["status"=>"sending","message"=>$this->M_wa->getMsg('greet')->message]);
             $this->sendingTextMsg($no,"tesss kkk");
-            $arrButton=[["type"=>"TEXT","title"=>"Dokumen"],["type"=>"TEXT","title"=>"Chat"]];
+            $arrButton=[["type"=>"REPLY","title"=>"Dokumen"],["type"=>"REPLY","title"=>"Chat"]];
             $this->sendInteractiveBtn($no,$this->M_wa->getMsg('greet')->message,$arrButton);
         }
         else if(in_array($input, $arrDoc))
