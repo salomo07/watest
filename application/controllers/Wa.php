@@ -72,7 +72,6 @@ class Wa extends CI_Controller
         else if(in_array($input, $arrGreet))
         {
             // echo json_encode(["status"=>"sending","message"=>$this->M_wa->getMsg('greet')->message]);
-            $this->sendingTextMsg($no,"tesss kkk");
             $arrButton=[["type"=>"REPLY","title"=>"Dokumen","id"=>1,"text"=>"Dokumen"],["type"=>"REPLY","title"=>"Chat","id"=>2,"text"=>"Chat"]];
             $this->sendInteractiveBtn($no,$this->M_wa->getMsg('greet')->message,$arrButton);
         }
@@ -158,7 +157,10 @@ class Wa extends CI_Controller
                 else{
                     $this->sendingTextMsg($this->formatingNumber($val->from),$msg->text);
                     $this->sendingTextMsg($this->formatingNumber($val->from),"End by client ".json_encode($val));
-                    if($msg->type=="TEXT" || $msg->type=="INTERACTIVE_BUTTON_REPLY")
+                    if($msg->type=="INTERACTIVE_BUTTON_REPLY"){
+                        $this->tree($msg->title,$val->from);
+                    }
+                    else if($msg->type=="TEXT")
                     {
                         if($msg->text=="#out")
                         {
