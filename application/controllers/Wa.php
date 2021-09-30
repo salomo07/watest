@@ -20,7 +20,7 @@ class Wa extends CI_Controller
     }
 
     function index(){
-        echo json_encode(["from"=>$this->ADIRA_NUMBER,"to"=>"","content"=>["body"=>["text"=>"WWW"],"action"=>["buttons"=>[["type"=>"Dokumen","title"=>"Dokumen"],["type"=>"Chat","title"=>"Chat"]]]]]);
+        echo json_encode(["from"=>$this->ADIRA_NUMBER,"to"=>"","content"=>["body"=>["text"=>"WWW"],"action"=>["buttons"=>[["type"=>"Dokumen","title"=>"Dokumen","id"=>1],["type"=>"Chat","title"=>"Chat","id"=>2]]]]]);
         echo 'This controller for WhatsApp usage';
     }
     public function formatingNumber($no){
@@ -72,8 +72,8 @@ class Wa extends CI_Controller
         {
             // echo json_encode(["status"=>"sending","message"=>$this->M_wa->getMsg('greet')->message]);
             $this->sendingTextMsg($no,$this->M_wa->getMsg('greet')->message);
-            $arrButton=[["type"=>"Dokumen","title"=>"Dokumen"],["type"=>"Chat","title"=>"Chat"]];
-            // $this->sendInteractiveBtn($no,$this->M_wa->getMsg('greet')->message,$arrButton);
+            $arrButton=[["type"=>"Dokumen","title"=>"Dokumen","id"=>1],["type"=>"Chat","title"=>"Chat","id"=>2]];
+            $this->sendInteractiveBtn($no,$this->M_wa->getMsg('greet')->message,$arrButton);
         }
         else if(in_array($input, $arrDoc))
         {
