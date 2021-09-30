@@ -45,7 +45,7 @@ class Wa extends CI_Controller
     }
     public function tree($input,$no) {
         $input=strtolower(urldecode($input));
-        $this->sendingTextMsg($input,$no);
+        $this->sendingTextMsg($no,$input);
         $now=new DateTime('NOW');
         $arrGreet = array("hai", "halo","hallo","selamat pagi", "selamat siang","selamat sore","selamat malam","menu","hi");
         $arrCall = array("call", "hubungi", "petugas", "hubungi petugas adira finance","chat","cs");
@@ -157,6 +157,7 @@ class Wa extends CI_Controller
                 }
                 else{
                     $this->sendingTextMsg($this->formatingNumber($val->from),$msg->text);
+                    $this->sendingTextMsg($this->formatingNumber($val->from),"End by client");
                     if($msg->type=="TEXT" || $msg->type=="INTERACTIVE_BUTTON_REPLY")
                     {
                         if($msg->text=="#out")
