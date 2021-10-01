@@ -20,8 +20,13 @@ class Wa extends CI_Controller
     }
 
     function index(){
+        echo substr("Namanya juga usaha",0,150).' ';
+        echo 'This controller for WhatsApp usage';
         
-        if(isset($_GET['to']) && isset($_GET['name'])){
+    }
+    function conversation(){
+        header('Content-Type: html');
+        if(isset($_GET['to']) && isset($_GET['nik'])){
             $this->load->view('conversation');   
         }
         // echo 'This controller for WhatsApp usage';
@@ -158,7 +163,6 @@ class Wa extends CI_Controller
                     $this->sendingTextMsg($val->from,"Sahabat Adira, \nMohon maaf, format pesan yang diperbolehkan hanya berupa Text, Image dan Document.");
                 }
                 else{
-
                     if($msg->type=="INTERACTIVE_BUTTON_REPLY"){
                         $this->tree($msg->title,$val->from);
                     }
@@ -171,7 +175,17 @@ class Wa extends CI_Controller
                         }
                         else if($this->M_wa->checkActiveConversation($val->from)!=null) //Jika percakapan sudah aktif
                         {
-                            $this->sendingTextMsg($val->from,"Percakapan telah dimulai, setelah tahap ini saya serahkan ke Intelix.");
+                            $session=$this->M_wa->checkActiveConversation($val->from);
+                            $username="";
+                            if(!isset($session->username))
+                            {
+                                $this->sendingTextMsg($val->from,"Username disimpan");
+                                $this->M_wa->updateConversation(["number"=>$_GET['no'],"username"=>substr($msg->text,0,50)]);
+                                $username=substr($msg->text,0,50);
+                            }
+                            $username=$username==""?$session->username:$val->contact->name;
+                            $arrMsg=["from"=>$val->from,"to"=>$this->ADIRA_NUMBER,"messageId"=>$val->messageId,"receivedAt"=>$now,"name"=>$username];
+                            $this->sendingTextMsg($val->from,json_encode($arrMsg));
                         }
                         else // Belum ada percakapan, masuk ke bot
                         {
