@@ -9,7 +9,6 @@ class Wa extends CI_Controller
     {
         // parent::__construct($securePage=false);
         parent::__construct();
-        header('Content-Type: application/json');
         $this->conf=json_decode(file_get_contents(base_url()."/waconf.json"));
         $this->BASE_URL=base64_decode($this->conf->BASE_URL);
         $this->ACCOUNT_KEY=base64_decode($this->conf->ACCOUNT_KEY);
@@ -20,8 +19,21 @@ class Wa extends CI_Controller
     }
 
     function index(){
-        echo json_encode(["from"=>$this->ADIRA_NUMBER,"to"=>"","content"=>["body"=>["text"=>"WWW"],"action"=>["buttons"=>[["type"=>"Dokumen","title"=>"Dokumen","id"=>1],["type"=>"Chat","title"=>"Chat","id"=>2]]]]]);
-        echo 'This controller for WhatsApp usage';
+        $this->load->view('conversation.php'); 
+        if(isset($_GET['to']) && isset($_GET['name'])){
+              
+        }
+        // echo 'This controller for WhatsApp usage';
+        
+    }
+    function conversation(){
+        header('Content-Type: application/json');
+        $this->load->view('conversation.php'); 
+        if(isset($_GET['to']) && isset($_GET['name'])){
+              
+        }
+        // echo 'This controller for WhatsApp usage';
+        
     }
     public function formatingNumber($no){
         if(substr($no, 0, 2)=="62"){return $no;}
@@ -71,7 +83,7 @@ class Wa extends CI_Controller
         else if(in_array($input, $arrGreet))
         {
             // echo json_encode(["status"=>"sending","message"=>$this->M_wa->getMsg('greet')->message]);
-            $arrButton=[["type"=>"REPLY","title"=>"Dokumen","id"=>1,"text"=>"Dokumen"],["type"=>"REPLY","title"=>"Chat","id"=>2,"text"=>"Chat"]];
+            $arrButton=[["type"=>"REPLY","title"=>"*Dokumen*","id"=>1],["type"=>"REPLY","title"=>"*Chat*","id"=>2]];
             $this->sendInteractiveBtn($no,$this->M_wa->getMsg('greet')->message,$arrButton);
         }
         else if(in_array($input, $arrDoc))
@@ -100,6 +112,7 @@ class Wa extends CI_Controller
         }
     }
     public function adminSend() {
+        header('Content-Type: application/json');
         if(!isset($_GET['no']) || !isset($_GET['text'])){echo json_encode(["status"=>"Bad request"]);die();}
         $to=$_GET['no'];
         $text=$_GET['text'];
@@ -119,12 +132,14 @@ class Wa extends CI_Controller
         }
     }
     public function getMsg() {
+        header('Content-Type: application/json');
         if(isset($_GET['keyword']) && isset($_GET['no'])){
             $keyword=strtolower(urldecode($_GET['keyword']));
             $this->tree($keyword,$_GET['no']);
         }
     }
     public function sendInteractiveBtn($to,$text,$arrButton) {
+        header('Content-Type: application/json');
         $ch = curl_init($this->BASE_URL.'whatsapp/1/message/interactive/buttons');
         curl_setopt($ch, CURLOPT_HTTPHEADER, array(
             'Authorization: App '.$this->API_KEY,
@@ -141,6 +156,7 @@ class Wa extends CI_Controller
         }
     }
     public function receivingInMsg() {
+        header('Content-Type: application/json');
         if(json_decode(file_get_contents('php://input'))==null){die();}
         else{
             $now=new DateTime('NOW');
@@ -182,6 +198,7 @@ class Wa extends CI_Controller
     }
 
     public function endConversation() {
+        header('Content-Type: application/json');
         if(!isset($_GET['no'])&&!isset($_GET['nik'])){die();}
         $now=new DateTime('NOW');
         $this->M_wa->updateConversation(["number"=>$_GET['no'],"nik"=>$_GET['nik'],"endtime"=>$now->format('c')]);
