@@ -9,6 +9,7 @@ class Wa extends CI_Controller
     {
         // parent::__construct($securePage=false);
         parent::__construct();
+        header('Content-Type: application/json');
         $this->conf=json_decode(file_get_contents(base_url()."/waconf.json"));
         $this->BASE_URL=base64_decode($this->conf->BASE_URL);
         $this->ACCOUNT_KEY=base64_decode($this->conf->ACCOUNT_KEY);
@@ -33,6 +34,7 @@ class Wa extends CI_Controller
               
         }
         // echo 'This controller for WhatsApp usage';
+        $this->output->set_output($data);
         
     }
     public function formatingNumber($no){
@@ -112,7 +114,6 @@ class Wa extends CI_Controller
         }
     }
     public function adminSend() {
-        header('Content-Type: application/json');
         if(!isset($_GET['no']) || !isset($_GET['text'])){echo json_encode(["status"=>"Bad request"]);die();}
         $to=$_GET['no'];
         $text=$_GET['text'];
@@ -132,14 +133,12 @@ class Wa extends CI_Controller
         }
     }
     public function getMsg() {
-        header('Content-Type: application/json');
         if(isset($_GET['keyword']) && isset($_GET['no'])){
             $keyword=strtolower(urldecode($_GET['keyword']));
             $this->tree($keyword,$_GET['no']);
         }
     }
     public function sendInteractiveBtn($to,$text,$arrButton) {
-        header('Content-Type: application/json');
         $ch = curl_init($this->BASE_URL.'whatsapp/1/message/interactive/buttons');
         curl_setopt($ch, CURLOPT_HTTPHEADER, array(
             'Authorization: App '.$this->API_KEY,
@@ -156,7 +155,6 @@ class Wa extends CI_Controller
         }
     }
     public function receivingInMsg() {
-        header('Content-Type: application/json');
         if(json_decode(file_get_contents('php://input'))==null){die();}
         else{
             $now=new DateTime('NOW');
@@ -198,7 +196,6 @@ class Wa extends CI_Controller
     }
 
     public function endConversation() {
-        header('Content-Type: application/json');
         if(!isset($_GET['no'])&&!isset($_GET['nik'])){die();}
         $now=new DateTime('NOW');
         $this->M_wa->updateConversation(["number"=>$_GET['no'],"nik"=>$_GET['nik'],"endtime"=>$now->format('c')]);
