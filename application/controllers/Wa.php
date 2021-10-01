@@ -185,7 +185,7 @@ class Wa extends CI_Controller
                             }
                             $username=$username==""?$session->username:$val->contact->name;
                             $arrMsg=["from"=>$val->from,"to"=>$this->ADIRA_NUMBER,"messageId"=>$val->messageId,"receivedAt"=>$now,"name"=>$username];
-                            $this->sendingTextMsg($val->from,json_encode($arrMsg));
+                            $this->sendingTextMsg($val->from,"".json_encode($arrMsg));
                         }
                         else // Belum ada percakapan, masuk ke bot
                         {
