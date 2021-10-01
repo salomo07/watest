@@ -20,21 +20,11 @@ class Wa extends CI_Controller
     }
 
     function index(){
-        $this->load->view('conversation.php'); 
-        if(isset($_GET['to']) && isset($_GET['name'])){
-              
-        }
-        // echo 'This controller for WhatsApp usage';
         
-    }
-    function conversation(){
-        header('Content-Type: application/json');
-        $this->load->view('conversation.php'); 
         if(isset($_GET['to']) && isset($_GET['name'])){
-              
+            $this->load->view('conversation');   
         }
         // echo 'This controller for WhatsApp usage';
-        $this->output->set_output($data);
         
     }
     public function formatingNumber($no){
