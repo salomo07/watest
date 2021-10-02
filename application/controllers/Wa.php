@@ -168,6 +168,7 @@ class Wa extends CI_Controller
                     $this->sendingTextMsg($val->from,"Sahabat Adira, \nMohon maaf, format pesan yang diperbolehkan hanya berupa Text, Image dan Document.");
                 }
                 else{
+                    $username="";
                     if($msg->type=="INTERACTIVE_BUTTON_REPLY"){
                         $this->tree($msg->title,$val->from);
                     }
@@ -181,7 +182,7 @@ class Wa extends CI_Controller
                         }
                         else if($session!=null) //Jika percakapan sudah dimulai
                         {
-                            $username=""; echo json_encode($session);
+                            
                             if($session->username || $session->username=="")
                             {
                                 $this->M_wa->updateConversation(["number"=>$val->from,"username"=>substr($msg->text,0,50)]);
@@ -197,12 +198,14 @@ class Wa extends CI_Controller
                             $this->tree($msg->text,$val->from);
                         }
                     }else if($msg->type=="IMAGE"){
+                        $username=$username==""?$session->username:$val->contact->name;
                         $arrMsg=["from"=>$val->from,"to"=>$this->ADIRA_NUMBER,"receivedAt"=>$now,"name"=>$username,"type"=>"IMAGE","text"=>$msg->caption,"url"=>$msg->url];
                             $this->M_wa->insertMessage($arrMsg);
                             $this->sendingTextMsg($val->from,"IMAGE tersimpan ".json_encode($arrMsg));
 
                     }
                     else if($msg->type=="DOCUMENT"){
+                        $username=$username==""?$session->username:$val->contact->name;
                         $arrMsg=["from"=>$val->from,"to"=>$this->ADIRA_NUMBER,"receivedAt"=>$now,"name"=>$username,"type"=>"IMAGE","text"=>$msg->caption,"url"=>$msg->url];
                             $this->M_wa->insertMessage($arrMsg);
                             $this->sendingTextMsg($val->from,"DOCUMENT tersimpan ".json_encode($arrMsg));
