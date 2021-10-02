@@ -69,7 +69,7 @@ class Wa extends CI_Controller
                 $msg=str_replace("... (Nama Konsumen)",$user->CRED_SID_NAME,$msg);
                 // echo json_encode(["status"=>"sending","message"=>$msg]);
                 $this->M_wa->updateConversation(["username"=>$user->CRED_SID_NAME,"number"=>$this->formatingNumber($no)]);
-                $this->sendingTextMsg($no,$msg);
+                // $this->sendingTextMsg($no,$msg);
             }
             else{
                 // echo json_encode(["status"=>"sending","message"=>$this->M_wa->getMsg('inputname')->message]);

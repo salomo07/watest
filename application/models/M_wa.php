@@ -10,6 +10,7 @@ class M_wa extends CI_Model {
     }
     function updateConversation($data) {
         if(substr($data["number"], 0, 2)=="62"){$no="0".substr($data["number"], 2);}
+        echo '$no';
         $this->db->where("number ='$no' and endtime is null");
         $this->db->update('active_conversation', $data);
     }
