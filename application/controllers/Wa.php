@@ -157,6 +157,7 @@ class Wa extends CI_Controller
         if(json_decode(file_get_contents('php://input'))==null){die();}
         else{
             $now=new DateTime('NOW');
+            $now=$now->format('c');
             $data=json_decode(file_get_contents('php://input'))->results;
             foreach ($data as $val) {
                 $msg= $val->message;
@@ -176,9 +177,9 @@ class Wa extends CI_Controller
                         if($msg->text=="#out")
                         {
                             $this->sendingTextMsg($this->formatingNumber($val->from),"End by client");
-                            $this->M_wa->updateConversation(["number"=>$val->from,"nik"=>"Ended by user","endtime"=>$now->format('c')]);
+                            $this->M_wa->updateConversation(["number"=>$val->from,"nik"=>"Ended by user","endtime"=>$now]);
                         }
-                        else if($session!=null) //Jika percakapan sudah aktif
+                        else if($session!=null) //Jika percakapan sudah dimulai
                         {
                             $username=""; echo json_encode($session);
                             if($session->username || $session->username=="")
@@ -187,16 +188,24 @@ class Wa extends CI_Controller
                                 $username=substr($msg->text,0,50);
                             }
                             $username=$username==""?$session->username:$val->contact->name;
-                            // echo json_encode($data);
-                            // $arrMsg=["from"=>$val->from,"to"=>$this->ADIRA_NUMBER,"messageId"=>$val->messageId,"receivedAt"=>$now,"name"=>$username];
-                            // $this->sendingTextMsg($val->from,"".json_encode($arrMsg));
+                            $arrMsg=["from"=>$val->from,"to"=>$this->ADIRA_NUMBER,"receivedAt"=>$now,"name"=>$username,"type"=>"TEXT","text"=>$msg->text];
+                            $this->M_wa->insertMessage($arrMsg);
+                            $this->sendingTextMsg($val->from,"TEXT tersimpan ".json_encode($arrMsg));
                         }
                         else // Belum ada percakapan, masuk ke bot
                         {
                             $this->tree($msg->text,$val->from);
                         }
                     }else if($msg->type=="IMAGE"){
+                        $arrMsg=["from"=>$val->from,"to"=>$this->ADIRA_NUMBER,"receivedAt"=>$now,"name"=>$username,"type"=>"IMAGE","text"=>$msg->caption,"url"=>$msg->url];
+                            $this->M_wa->insertMessage($arrMsg);
+                            $this->sendingTextMsg($val->from,"IMAGE tersimpan ".json_encode($arrMsg));
 
+                    }
+                    else if($msg->type=="DOCUMENT"){
+                        $arrMsg=["from"=>$val->from,"to"=>$this->ADIRA_NUMBER,"receivedAt"=>$now,"name"=>$username,"type"=>"IMAGE","text"=>$msg->caption,"url"=>$msg->url];
+                            $this->M_wa->insertMessage($arrMsg);
+                            $this->sendingTextMsg($val->from,"DOCUMENT tersimpan ".json_encode($arrMsg));
                     }
                 }
             }

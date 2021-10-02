@@ -8,6 +8,9 @@ class M_wa extends CI_Model {
     function insertConversation($data) {
         $this->db->insert('active_conversation', $data);
     }
+    function insertMessage($data) {
+        $this->db->insert('wa_messages', $data);
+    }
     function updateConversation($data) {
         $no=$data["number"];
         $this->db->where("number ='$no' and endtime is null");
