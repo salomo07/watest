@@ -60,6 +60,9 @@ class Wa extends CI_Controller
         $arrDoc = array("dok", "dokumen");
         if(in_array($input, $arrCall)) // Jika pesan berisi keyword seperti dalam array
         {
+            if($this->M_wa->checkActiveConversation($no)==null)
+            {$this->M_wa->insertConversation(["number"=>$no,"starttime"=>$now->format('c'),"keyword"=>"cs"]);}
+
             $user=$this->M_wa->getLeads($no); // Check to database from leads
             if($user){  
                 $msg=$this->M_wa->getMsg('call')->message;
@@ -72,10 +75,7 @@ class Wa extends CI_Controller
                 // echo json_encode(["status"=>"sending","message"=>$this->M_wa->getMsg('inputname')->message]);
                 $this->sendingTextMsg($no,$this->M_wa->getMsg('inputname')->message);
             }
-            if($this->M_wa->checkActiveConversation($no)==null)
-            {
-                $this->M_wa->insertConversation(["number"=>$no,"starttime"=>$now->format('c'),"keyword"=>"cs"]); // Save session of conversation
-            }
+            
             die();
         }
         else if(in_array($input, $arrGreet))
@@ -86,6 +86,9 @@ class Wa extends CI_Controller
         }
         else if(in_array($input, $arrDoc))
         {
+            if($this->M_wa->checkActiveConversation($no)==null)
+            {$this->M_wa->insertConversation(["number"=>$no,"starttime"=>$now->format('c'),"keyword"=>"dokumen"]);}
+
             $user=$this->M_wa->getLeads($no); // Check to database from leads
             if($user){
                 $msg=$this->M_wa->getMsg('dokumen')->message;
@@ -98,8 +101,6 @@ class Wa extends CI_Controller
                 // echo json_encode(["status"=>"sending","message"=>$this->M_wa->getMsg('inputname')->message]);
                 $this->sendingTextMsg($no,$this->M_wa->getMsg('inputname')->message);
             }
-            if($this->M_wa->checkActiveConversation($val->from)==null)
-            {$this->M_wa->insertConversation(["number"=>$no,"starttime"=>$now->format('c'),"keyword"=>"dokumen"]);}
         }
         else if($this->M_wa->getMsg($input)!=null)
         {
