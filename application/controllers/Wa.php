@@ -67,9 +67,8 @@ class Wa extends CI_Controller
             if($user){  
                 $msg=$this->M_wa->getMsg('call')->message;
                 $msg=str_replace("... (Nama Konsumen)",$user->CRED_SID_NAME,$msg);
-                // echo json_encode(["status"=>"sending","message"=>$msg]);
                 $this->M_wa->updateConversation(["username"=>$user->CRED_SID_NAME,"number"=>$this->formatingNumber($no)]);
-                // $this->sendingTextMsg($no,$msg);
+                $this->sendingTextMsg($no,$msg);
             }
             else{
                 // echo json_encode(["status"=>"sending","message"=>$this->M_wa->getMsg('inputname')->message]);
@@ -108,7 +107,9 @@ class Wa extends CI_Controller
         }
         else {
             // Exception jika keyword tidak dikenali, akan memunculkan menu
-            $this->sendingTextMsg($no,$this->M_wa->getMsg('greet')->message);
+
+            $arrButton=[["type"=>"REPLY","title"=>"Dokumen","id"=>1],["type"=>"REPLY","title"=>"Tanya","id"=>2]];
+            $this->sendInteractiveBtn($no,$this->M_wa->getMsg('greet')->message,$arrButton);
         }
     }
     public function adminSend() {
@@ -142,9 +143,9 @@ class Wa extends CI_Controller
             'Authorization: App '.$this->API_KEY,
             'Content-Type: application/json'
         ));
-
+        $fields=json_encode(["from"=>$this->ADIRA_NUMBER,"to"=>$this->formatingNumber($to),"content"=>["body"=>["text"=>$text],"action"=>["buttons"=>$arrButton]]]);
         curl_setopt($ch, CURLOPT_POST ,TRUE);
-        curl_setopt($ch, CURLOPT_POSTFIELDS ,json_encode(["from"=>$this->ADIRA_NUMBER,"to"=>$this->formatingNumber($to),"content"=>["body"=>["text"=>$text],"action"=>["buttons"=>$arrButton]]]));
+        curl_setopt($ch, CURLOPT_POSTFIELDS ,$fields);
         try{
             $result=curl_exec($ch);
         }
@@ -171,24 +172,24 @@ class Wa extends CI_Controller
                     }
                     else if($msg->type=="TEXT")
                     {
+                        $session=$this->M_wa->checkActiveConversation($val->from);
                         if($msg->text=="#out")
                         {
                             $this->sendingTextMsg($this->formatingNumber($val->from),"End by client");
                             $this->M_wa->updateConversation(["number"=>$val->from,"nik"=>"Ended by user","endtime"=>$now->format('c')]);
                         }
-                        else if($this->M_wa->checkActiveConversation($val->from)!=null) //Jika percakapan sudah aktif
+                        else if($session!=null) //Jika percakapan sudah aktif
                         {
-                            $session=$this->M_wa->checkActiveConversation($val->from);
-                            $username="";
-                            if(!isset($session->username))
+                            $username=""; echo json_encode($session);
+                            if($session->username || $session->username=="")
                             {
-                                $this->sendingTextMsg($val->from,"Username disimpan");
-                                $this->M_wa->updateConversation(["number"=>$_GET['no'],"username"=>substr($msg->text,0,50)]);
+                                $this->M_wa->updateConversation(["number"=>$val->from,"username"=>substr($msg->text,0,50)]);
                                 $username=substr($msg->text,0,50);
                             }
                             $username=$username==""?$session->username:$val->contact->name;
-                            $arrMsg=["from"=>$val->from,"to"=>$this->ADIRA_NUMBER,"messageId"=>$val->messageId,"receivedAt"=>$now,"name"=>$username];
-                            $this->sendingTextMsg($val->from,"".json_encode($arrMsg));
+                            // echo json_encode($data);
+                            // $arrMsg=["from"=>$val->from,"to"=>$this->ADIRA_NUMBER,"messageId"=>$val->messageId,"receivedAt"=>$now,"name"=>$username];
+                            // $this->sendingTextMsg($val->from,"".json_encode($arrMsg));
                         }
                         else // Belum ada percakapan, masuk ke bot
                         {
