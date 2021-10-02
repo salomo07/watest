@@ -65,6 +65,7 @@ class Wa extends CI_Controller
                 $msg=$this->M_wa->getMsg('call')->message;
                 $msg=str_replace("... (Nama Konsumen)",$user->CRED_SID_NAME,$msg);
                 // echo json_encode(["status"=>"sending","message"=>$msg]);
+                $this->M_wa->updateConversation(["username"=>$user->CRED_SID_NAME,"number"=>$val->from]);
                 $this->sendingTextMsg($no,$msg);
             }
             else{
@@ -73,7 +74,7 @@ class Wa extends CI_Controller
             }
             if($this->M_wa->checkActiveConversation($no)==null)
             {
-                $this->M_wa->insertConversation(["number"=>"0".substr($no, 2),"starttime"=>$now->format('c'),"keyword"=>"cs"]); // Save session of conversation
+                $this->M_wa->insertConversation(["number"=>$no,"starttime"=>$now->format('c'),"keyword"=>"cs"]); // Save session of conversation
             }
             die();
         }
@@ -91,13 +92,14 @@ class Wa extends CI_Controller
                 $msg=str_replace("... (Nama Konsumen)",$user->CRED_SID_NAME,$msg); 
                 // echo json_encode(["status"=>"sending","message"=>$msg]);
                 $this->sendingTextMsg($no,$msg);
+                $this->M_wa->updateConversation(["username"=>$user->CRED_SID_NAME,"number"=>$val->from]);
             }
             else{
                 // echo json_encode(["status"=>"sending","message"=>$this->M_wa->getMsg('inputname')->message]);
                 $this->sendingTextMsg($no,$this->M_wa->getMsg('inputname')->message);
             }
             if($this->M_wa->checkActiveConversation($val->from)==null)
-            {$this->M_wa->insertConversation(["number"=>"0".substr($no, 2),"starttime"=>$now->format('c'),"keyword"=>"dokumen"]);}
+            {$this->M_wa->insertConversation(["number"=>$no,"starttime"=>$now->format('c'),"keyword"=>"dokumen"]);}
         }
         else if($this->M_wa->getMsg($input)!=null)
         {
