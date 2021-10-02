@@ -169,12 +169,12 @@ class Wa extends CI_Controller
                 }
                 else{
                     $username="";
+                    $session=$this->M_wa->checkActiveConversation($val->from);
                     if($msg->type=="INTERACTIVE_BUTTON_REPLY"){
                         $this->tree($msg->title,$val->from);
                     }
                     else if($msg->type=="TEXT")
-                    {
-                        $session=$this->M_wa->checkActiveConversation($val->from);
+                    {                        
                         if($msg->text=="#out")
                         {
                             $this->sendingTextMsg($this->formatingNumber($val->from),"End by client");
