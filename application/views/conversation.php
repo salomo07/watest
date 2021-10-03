@@ -73,10 +73,16 @@ defined('BASEPATH') OR exit('No direct script access allowed');
       </div>
    </div>
 </div>
-<div id="chatCustomer">
+<div id="chatCustomer" style="display: none">
   <li class="clearfix">
-    <div class="message-data text-right"> <span class="message-data-time" id="chatTime">Username 10:10 AM, Today</span> <img src="https://bootdey.com/img/Content/avatar/avatar7.png" alt="avatar"></div>
+    <div class="message-data text-right"> <span class="message-data-time" id="chatTime"></span> <img src="https://bootdey.com/img/Content/avatar/avatar7.png" alt="avatar"></div>
     <div class="message other-message float-right" id="message"> Hi Aiden, how are you? How is the project coming along?</div>
+  </li>
+</div>
+<div id="chatAdmin" style="display: none">
+  <li class="clearfix">
+    <div class="message-data"> <span class="message-data-time" id="chatTime">10:12 AM, Today</span></div>
+    <div class="message my-message" id="message">Are we meeting today?</div>
   </li>
 </div>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.14.7/umd/popper.min.js" integrity="sha384-UO2eT0CpHqdSJQ6hJty5KVphtPhzWj9WO1clHTMGa3JDZwrnQq4sF86dIHNDz0W1" crossorigin="anonymous"></script>
@@ -96,11 +102,17 @@ defined('BASEPATH') OR exit('No direct script access allowed');
     $.ajax({url: "<?= base_url() ?>wa/getMessages?no="+no,dataType:'json', success: function(res){
       var chat=[];
       res.forEach( function(val, index) {
+        console.log(val)
         if(val.sender==no)
-        {console.log(val)
-          $("#chatCustomer").find("#chatTime").text(val.name +"  "+val.receivedAt);
+        {
+          $("#chatCustomer").find("#chatTime").text(val.receivedAt);
           $("#chatCustomer").find("#message").text(val.text);
           chat.push($("#chatCustomer").html());
+        }
+        else{
+          $("#chatAdmin").find("#chatTime").text("Admin ("+val.name +")  "+val.receivedAt);
+          $("#chatAdmin").find("#message").text(val.text);
+          chat.push($("#chatAdmin").html());
         }
       });
       $('.chat-history>ul').html(chat);

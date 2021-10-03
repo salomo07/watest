@@ -116,6 +116,9 @@ class Wa extends CI_Controller
         if(!isset($_GET['no']) || !isset($_GET['text'])){echo json_encode(["status"=>"Bad request"]);die();}
         $to=$_GET['no'];
         $text=$_GET['text'];
+        $nik=$_GET['nik'];
+        $now=new DateTime('NOW');
+        $now=$now->format('c');
         $ch = curl_init($this->BASE_URL.'whatsapp/1/message/text');
         curl_setopt($ch, CURLOPT_HTTPHEADER, array(
             'Authorization: App '.$this->API_KEY,
@@ -124,6 +127,8 @@ class Wa extends CI_Controller
 
         curl_setopt($ch, CURLOPT_POST ,TRUE);
         curl_setopt($ch, CURLOPT_POSTFIELDS ,json_encode(["from"=>$this->ADIRA_NUMBER,"to"=>$this->formatingNumber($to),"content"=>["text"=>$text]]));
+        $arrMsg=["sender"=>$this->ADIRA_NUMBER,"receiver"=>$this->formatingNumber($to),"receivedAt"=>$now,"type"=>"TEXT","text"=>$text];
+        $this->M_wa->insertMessage($arrMsg);
         try{
             $result=curl_exec($ch);
         }
@@ -194,9 +199,8 @@ class Wa extends CI_Controller
                                 $username=substr($msg->text,0,50);
                             }
                             $username=$session!=null?$session->username:$val->contact->name;
-                            $arrMsg=["sender"=>$val->from,"receiver"=>$this->ADIRA_NUMBER,"receivedAt"=>$now,"name"=>$username,"type"=>"TEXT","text"=>$msg->text];
+                            $arrMsg=["sender"=>$val->from,"receiver"=>$this->ADIRA_NUMBER,"receivedAt"=>$now,"type"=>"TEXT","text"=>$msg->text];
                             $this->M_wa->insertMessage($arrMsg);
-                            $this->sendingTextMsg($val->from,"TEXT tersimpan ".json_encode($arrMsg));
                         }
                         else // Belum ada percakapan, masuk ke bot
                         {
@@ -204,16 +208,14 @@ class Wa extends CI_Controller
                         }
                     }else if($msg->type=="IMAGE"){
                         $username=$session!=null?$session->username:$val->contact->name;
-                        $arrMsg=["sender"=>$val->from,"receiver"=>$this->ADIRA_NUMBER,"receivedAt"=>$now,"name"=>$username,"type"=>"IMAGE","text"=>$msg->caption,"url"=>$msg->url];
-                            $this->M_wa->insertMessage($arrMsg);
-                            $this->sendingTextMsg($val->from,"IMAGE tersimpan ".json_encode($arrMsg));
+                        $arrMsg=["sender"=>$val->from,"receiver"=>$this->ADIRA_NUMBER,"receivedAt"=>$now,"type"=>"IMAGE","text"=>$msg->caption,"url"=>$msg->url];
+                        $this->M_wa->insertMessage($arrMsg);
 
                     }
                     else if($msg->type=="DOCUMENT"){
                         $username=$session!=null?$session->username:$val->contact->name;
-                        $arrMsg=["sender"=>$val->from,"receiver"=>$this->ADIRA_NUMBER,"receivedAt"=>$now,"name"=>$username,"type"=>"IMAGE","text"=>$msg->caption,"url"=>$msg->url];
+                        $arrMsg=["sender"=>$val->from,"receiver"=>$this->ADIRA_NUMBER,"receivedAt"=>$now,"type"=>"IMAGE","text"=>$msg->caption,"url"=>$msg->url];
                             $this->M_wa->insertMessage($arrMsg);
-                            $this->sendingTextMsg($val->from,"DOCUMENT tersimpan ".json_encode($arrMsg));
                     }
                 }
             }

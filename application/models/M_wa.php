@@ -12,7 +12,7 @@ class M_wa extends CI_Model {
         $this->db->insert('messages', $data);
     }
     function getMessages($no){
-        $query= $this->db->query("select *,DATE_FORMAT(receivedAt, '%d/%m/%Y %H:%i') as receivedAt from messages where sender ='$no' or receiver='$no' order by CAST(receivedAt AS DATETIME)");
+        $query= $this->db->query("select distinct *,DATE_FORMAT(receivedAt, '%d/%m/%Y %H:%i') as receivedAt from messages where sender ='$no' or receiver='$no' order by CAST(receivedAt AS DATETIME)");
         return $query->result();
     }
     function updateConversation($data) {
