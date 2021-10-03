@@ -9,12 +9,20 @@ class M_wa extends CI_Model {
         $this->db->insert('active_conversation', $data);
     }
     function insertMessage($data) {
-        $this->db->insert('wa_messages', $data);
+        $this->db->insert('messages', $data);
+    }
+    function getMessages($no){
+        $query= $this->db->query("select *,DATE_FORMAT(receivedAt, '%d/%m/%Y %H:%i') as receivedAt from messages where sender ='$no' or receiver='$no' order by CAST(receivedAt AS DATETIME)");
+        return $query->result();
     }
     function updateConversation($data) {
         $no=$data["number"];
         $this->db->where("number ='$no' and endtime is null");
         $this->db->update('active_conversation', $data);
+    }
+    function getCustomerOnline(){
+        $query= $this->db->query("select * from active_conversation where endtime is null");
+        return $query->result();
     }
     function checkActiveConversation($no) {
         $query= $this->db->query("select * from active_conversation where number='$no' and endtime IS NULL");
@@ -24,7 +32,7 @@ class M_wa extends CI_Model {
         $query= $this->db->query("select message from keywords where keyword='$keyword'");
         return $query->row();
     }
-    function getMsg($keyword) {
+    function getKeyword($keyword) {
         $query= $this->db->query("select message from keywords where keyword='$keyword'");
         return $query->row();
     }

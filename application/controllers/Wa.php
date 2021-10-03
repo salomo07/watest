@@ -26,8 +26,9 @@ class Wa extends CI_Controller
     }
     function conversation(){
         header('Content-Type: html');
-        if(isset($_GET['to']) && isset($_GET['nik'])){
-            $this->load->view('conversation');   
+        $data['listcustomer']=$this->M_wa->getCustomerOnline();
+        if(isset($_GET['nik'])){
+            $this->load->view('conversation',$data);   
         }
         // echo 'This controller for WhatsApp usage';
         
@@ -65,23 +66,22 @@ class Wa extends CI_Controller
 
             $user=$this->M_wa->getLeads($no); // Check to database from leads
             if($user){  
-                $msg=$this->M_wa->getMsg('call')->message;
+                $msg=$this->M_wa->getKeyword('call')->message;
                 $msg=str_replace("... (Nama Konsumen)",$user->CRED_SID_NAME,$msg);
                 $this->M_wa->updateConversation(["username"=>$user->CRED_SID_NAME,"number"=>$this->formatingNumber($no)]);
                 $this->sendingTextMsg($no,$msg);
             }
             else{
-                // echo json_encode(["status"=>"sending","message"=>$this->M_wa->getMsg('inputname')->message]);
-                $this->sendingTextMsg($no,$this->M_wa->getMsg('inputname')->message);
+                $this->sendingTextMsg($no,$this->M_wa->getKeyword('inputname')->message);
             }
             
             die();
         }
         else if(in_array($input, $arrGreet))
         {
-            // echo json_encode(["status"=>"sending","message"=>$this->M_wa->getMsg('greet')->message]);
+            // echo json_encode(["status"=>"sending","message"=>$this->M_wa->getKeyword('greet')->message]);
             $arrButton=[["type"=>"REPLY","title"=>"Dokumen","id"=>1],["type"=>"REPLY","title"=>"Tanya","id"=>2]];
-            $this->sendInteractiveBtn($no,$this->M_wa->getMsg('greet')->message,$arrButton);
+            $this->sendInteractiveBtn($no,$this->M_wa->getKeyword('greet')->message,$arrButton);
         }
         else if(in_array($input, $arrDoc))
         {
@@ -90,26 +90,26 @@ class Wa extends CI_Controller
 
             $user=$this->M_wa->getLeads($no); // Check to database from leads
             if($user){
-                $msg=$this->M_wa->getMsg('dokumen')->message;
+                $msg=$this->M_wa->getKeyword('dokumen')->message;
                 $msg=str_replace("... (Nama Konsumen)",$user->CRED_SID_NAME,$msg); 
                 // echo json_encode(["status"=>"sending","message"=>$msg]);
                 $this->sendingTextMsg($no,$msg);
                 $this->M_wa->updateConversation(["username"=>$user->CRED_SID_NAME,"number"=>$this->formatingNumber($no)]);
             }
             else{
-                // echo json_encode(["status"=>"sending","message"=>$this->M_wa->getMsg('inputname')->message]);
-                $this->sendingTextMsg($no,$this->M_wa->getMsg('inputname')->message);
+                // echo json_encode(["status"=>"sending","message"=>$this->M_wa->getKeyword('inputname')->message]);
+                $this->sendingTextMsg($no,$this->M_wa->getKeyword('inputname')->message);
             }
         }
-        else if($this->M_wa->getMsg($input)!=null)
+        else if($this->M_wa->getKeyword($input)!=null)
         {
-            $this->sendingTextMsg($no,$this->M_wa->getMsg($input)->message);
+            $this->sendingTextMsg($no,$this->M_wa->getKeyword($input)->message);
         }
         else {
             // Exception jika keyword tidak dikenali, akan memunculkan menu
 
             $arrButton=[["type"=>"REPLY","title"=>"Dokumen","id"=>1],["type"=>"REPLY","title"=>"Tanya","id"=>2]];
-            $this->sendInteractiveBtn($no,$this->M_wa->getMsg('greet')->message,$arrButton);
+            $this->sendInteractiveBtn($no,$this->M_wa->getKeyword('greet')->message,$arrButton);
         }
     }
     public function adminSend() {
@@ -131,10 +131,15 @@ class Wa extends CI_Controller
             // echo json_encode($e);
         }
     }
-    public function getMsg() {
-        if(isset($_GET['keyword']) && isset($_GET['no'])){
-            $keyword=strtolower(urldecode($_GET['keyword']));
-            $this->tree($keyword,$_GET['no']);
+    // public function getKeyword() {
+    //     if(isset($_GET['keyword']) && isset($_GET['no'])){
+    //         $keyword=strtolower(urldecode($_GET['keyword']));
+    //         $this->tree($keyword,$_GET['no']);
+    //     }
+    // }
+    public function getMessages() {
+        if(isset($_GET['no'])){
+            echo json_encode($this->M_wa->getMessages($_GET['no']));
         }
     }
     public function sendInteractiveBtn($to,$text,$arrButton) {
@@ -188,8 +193,8 @@ class Wa extends CI_Controller
                                 $this->M_wa->updateConversation(["number"=>$val->from,"username"=>substr($msg->text,0,50)]);
                                 $username=substr($msg->text,0,50);
                             }
-                            $username=$username==""?$session->username:$val->contact->name;
-                            $arrMsg=["from"=>$val->from,"to"=>$this->ADIRA_NUMBER,"receivedAt"=>$now,"name"=>$username,"type"=>"TEXT","text"=>$msg->text];
+                            $username=$session!=null?$session->username:$val->contact->name;
+                            $arrMsg=["sender"=>$val->from,"receiver"=>$this->ADIRA_NUMBER,"receivedAt"=>$now,"name"=>$username,"type"=>"TEXT","text"=>$msg->text];
                             $this->M_wa->insertMessage($arrMsg);
                             $this->sendingTextMsg($val->from,"TEXT tersimpan ".json_encode($arrMsg));
                         }
@@ -198,15 +203,15 @@ class Wa extends CI_Controller
                             $this->tree($msg->text,$val->from);
                         }
                     }else if($msg->type=="IMAGE"){
-                        $username=$username==""?$session->username:$val->contact->name;
-                        $arrMsg=["from"=>$val->from,"to"=>$this->ADIRA_NUMBER,"receivedAt"=>$now,"name"=>$username,"type"=>"IMAGE","text"=>$msg->caption,"url"=>$msg->url];
+                        $username=$session!=null?$session->username:$val->contact->name;
+                        $arrMsg=["sender"=>$val->from,"receiver"=>$this->ADIRA_NUMBER,"receivedAt"=>$now,"name"=>$username,"type"=>"IMAGE","text"=>$msg->caption,"url"=>$msg->url];
                             $this->M_wa->insertMessage($arrMsg);
                             $this->sendingTextMsg($val->from,"IMAGE tersimpan ".json_encode($arrMsg));
 
                     }
                     else if($msg->type=="DOCUMENT"){
-                        $username=$username==""?$session->username:$val->contact->name;
-                        $arrMsg=["from"=>$val->from,"to"=>$this->ADIRA_NUMBER,"receivedAt"=>$now,"name"=>$username,"type"=>"IMAGE","text"=>$msg->caption,"url"=>$msg->url];
+                        $username=$session!=null?$session->username:$val->contact->name;
+                        $arrMsg=["sender"=>$val->from,"receiver"=>$this->ADIRA_NUMBER,"receivedAt"=>$now,"name"=>$username,"type"=>"IMAGE","text"=>$msg->caption,"url"=>$msg->url];
                             $this->M_wa->insertMessage($arrMsg);
                             $this->sendingTextMsg($val->from,"DOCUMENT tersimpan ".json_encode($arrMsg));
                     }
@@ -219,6 +224,6 @@ class Wa extends CI_Controller
         if(!isset($_GET['no'])&&!isset($_GET['nik'])){die();}
         $now=new DateTime('NOW');
         $this->M_wa->updateConversation(["number"=>$_GET['no'],"nik"=>$_GET['nik'],"endtime"=>$now->format('c')]);
-        $this->sendingTextMsg($this->formatingNumber($_GET['no']),$this->M_wa->getMsg('end')->message);
+        $this->sendingTextMsg($this->formatingNumber($_GET['no']),$this->M_wa->getKeyword('end')->message);
     }    
 }
