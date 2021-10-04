@@ -112,8 +112,8 @@ class Wa extends CI_Controller
             $this->sendInteractiveBtn($no,$this->M_wa->getKeyword('greet')->message,$arrButton);
         }
     }
-    public function adminSend() {
-        if(!isset($_GET['no']) || !isset($_GET['text'])){echo json_encode(["status"=>"Bad request"]);die();}
+    public function saveMessages() {
+        if(!isset($_GET['no']) || !isset($_GET['text']) || !isset($_GET['nik'])){echo json_encode(["status"=>"Bad request"]);die();}
         $to=$_GET['no'];
         $text=$_GET['text'];
         $nik=$_GET['nik'];
@@ -192,8 +192,8 @@ class Wa extends CI_Controller
                         }
                         else if($session!=null) //Jika percakapan sudah dimulai
                         {
-                            
-                            if($session->username || $session->username=="")
+                            var_dump($session);                            
+                            if($session->username=="")
                             {
                                 $this->M_wa->updateConversation(["number"=>$val->from,"username"=>substr($msg->text,0,50)]);
                                 $username=substr($msg->text,0,50);
