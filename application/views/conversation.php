@@ -273,7 +273,7 @@ defined('BASEPATH') OR exit('No direct script access allowed');
 <link href="https://maxcdn.bootstrapcdn.com/font-awesome/4.7.0/css/font-awesome.min.css" rel="stylesheet">
 <div class="container">
    <div class="row clearfix" style="margin-top: 50px">
-      <div class="col-lg-12">
+      <div class="col-lg-12" style="opacity: 0.95;">
          <div class="card chat-app">
             <div id="plist" class="people-list">
                <div class="input-group">
@@ -282,7 +282,7 @@ defined('BASEPATH') OR exit('No direct script access allowed');
                </div>
                <ul class="list-unstyled chat-list mt-2 mb-0">
                   <?php foreach ($listcustomer as $val): ?>
-                    <li class="clearfix" onclick="getChat(<?= $val->number ?>,this)">
+                    <li class="clearfix" onclick="getChat(<?= $val->number ?>,'<?= $val->username ?>',this)">
                        <img src="https://bootdey.com/img/Content/avatar/avatar2.png" alt="avatar">
                        <div class="about">
                           <div class="name"><?= $val->username ?></div>
@@ -298,8 +298,8 @@ defined('BASEPATH') OR exit('No direct script access allowed');
                      <div class="col-lg-6">
                         <a href="javascript:void(0);" data-toggle="modal" data-target="#view_info"> <img src="https://bootdey.com/img/Content/avatar/avatar2.png" alt="avatar"> </a>
                         <div class="chat-about">
-                           <h6 class="m-b-0"><?= isset($_GET['nik'])?$_GET['nik']:""?></h6>
-                           <small>Last seen: 2 hours ago</small>
+                           <h6 class="m-b-0"></h6>
+                           <small>Click customer name for start chat</small>
                         </div>
                      </div>
                      <div class="col-lg-6 hidden-sm text-right"> <a href="javascript:void(0);" class="btn btn-outline-primary"><i class="fa fa-image"></i></a> <a href="javascript:void(0);" class="btn btn-outline-info"><i class="fa fa-cogs"></i></a> <a href="javascript:void(0);" class="btn btn-outline-warning"><i class="fa fa-question"></i></a></div>
@@ -344,7 +344,8 @@ defined('BASEPATH') OR exit('No direct script access allowed');
 
 <script>
   var noSelected;
-  function getChat(no,ele){noSelected=no;
+  function getChat(no,username,ele){noSelected=no;
+    $('.chat-about>h6').text(username);
     $(ele).attr('class', 'clearfix active');
     $('.chat-history>ul').html("<center><h2>Please wait...</h2></center>");
     $.ajax({url: "<?= base_url() ?>wa/getMessages?no="+no,dataType:'json', success: function(res){
