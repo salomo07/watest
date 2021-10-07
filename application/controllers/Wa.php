@@ -187,12 +187,11 @@ class Wa extends CI_Controller
                     {                        
                         if($msg->text=="#out")
                         {
-                            $this->sendingTextMsg($this->formatingNumber($val->from),"End by client");
+                            $this->sendingTextMsg($this->formatingNumber($val->from),$this->M_wa->getKeyword('end')->message);
                             $this->M_wa->updateConversation(["number"=>$val->from,"nik"=>"Ended by user","endtime"=>$now]);
                         }
                         else if($session!=null) //Jika percakapan sudah dimulai
-                        {
-                            var_dump($session);                            
+                        {                           
                             if($session->username=="")
                             {
                                 $this->M_wa->updateConversation(["number"=>$val->from,"username"=>substr($msg->text,0,50)]);

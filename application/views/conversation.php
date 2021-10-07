@@ -345,6 +345,9 @@ defined('BASEPATH') OR exit('No direct script access allowed');
 <script>
   var noSelected;
   function getChat(no,username,ele){noSelected=no;
+    $(".list-unstyled> li").each(function(index, el) {
+      $(el).attr('class', 'clearfix');
+    });
     $('.chat-about>h6').text(username);
     $(ele).attr('class', 'clearfix active');
     $('.chat-history>ul').html("<center><h2>Please wait...</h2></center>");
