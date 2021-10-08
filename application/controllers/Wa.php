@@ -29,9 +29,13 @@ class Wa extends CI_Controller
         $data['listcustomer']=$this->M_wa->getCustomerOnline();
         if(isset($_GET['nik'])){
             $this->load->view('conversation',$data);   
-        }
-        // echo 'This controller for WhatsApp usage';
-        
+        }        
+    }
+    function blastPengajuanECom(){
+        if(isset($_GET['no']))
+        {
+
+        }      
     }
     public function formatingNumber($no){
         if(substr($no, 0, 2)=="62"){return $no;}
@@ -53,11 +57,27 @@ class Wa extends CI_Controller
             // echo json_encode($e);
         }
     }
+    public function sendingTemplateMsg($to,$text) {
+        $ch = curl_init($this->BASE_URL.'whatsapp/1/message/template');
+        curl_setopt($ch, CURLOPT_HTTPHEADER, array(
+            'Authorization: App '.$this->API_KEY,
+            'Content-Type: application/json'
+        ));
+
+        curl_setopt($ch, CURLOPT_POST ,TRUE);
+        curl_setopt($ch, CURLOPT_POSTFIELDS ,json_encode(["from"=>$this->ADIRA_NUMBER,"to"=>$this->formatingNumber($to),"content"=>["templateName"=>$text]]));
+        try{
+            $result=curl_exec($ch);
+        }
+        catch(Exception $e){
+            // echo json_encode($e);
+        }
+    }
     public function tree($input,$no) {
         $input=strtolower(urldecode($input));
         $now=new DateTime('NOW');
         $arrGreet = array("hai", "halo","hallo","selamat pagi", "selamat siang","selamat sore","selamat malam","menu","hi");
-        $arrCall = array("call", "hubungi", "petugas", "hubungi petugas adira finance","chat","cs","tanya");
+        $arrCall = array("call", "hubungi", "petugas", "hubungi petugas adira finance","chat","cs","tanya","tanya cs");
         $arrDoc = array("dok", "dokumen");
         if(in_array($input, $arrCall)) // Jika pesan berisi keyword seperti dalam array
         {
@@ -136,12 +156,6 @@ class Wa extends CI_Controller
             // echo json_encode($e);
         }
     }
-    // public function getKeyword() {
-    //     if(isset($_GET['keyword']) && isset($_GET['no'])){
-    //         $keyword=strtolower(urldecode($_GET['keyword']));
-    //         $this->tree($keyword,$_GET['no']);
-    //     }
-    // }
     public function getMessages() {
         if(isset($_GET['no'])){
             echo json_encode($this->M_wa->getMessages($_GET['no']));
