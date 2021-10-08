@@ -76,9 +76,11 @@ class Wa extends CI_Controller
     public function tree($input,$no) {
         $input=strtolower(urldecode($input));
         $now=new DateTime('NOW');
+        $arrCall = array("call", "hubungi", "petugas", "hubungi petugas adira finance","chat","cs","tanya","tanya cs");
         $arrGreet = array("hai", "halo","hallo","selamat pagi", "selamat siang","selamat sore","selamat malam","menu","hi");
         $arrCall = array("call", "hubungi", "petugas", "hubungi petugas adira finance","chat","cs","tanya","tanya cs");
         $arrDoc = array("dok", "dokumen");
+        $arrButton=[["type"=>"REPLY","title"=>"Dokumen","id"=>1],["type"=>"REPLY","title"=>"Tanya","id"=>2],["type"=>"REPLY","title"=>"Info Jadwal","id"=>3]];
         if(in_array($input, $arrCall)) // Jika pesan berisi keyword seperti dalam array
         {
             if($this->M_wa->checkActiveConversation($no)==null)
@@ -100,7 +102,6 @@ class Wa extends CI_Controller
         else if(in_array($input, $arrGreet))
         {
             // echo json_encode(["status"=>"sending","message"=>$this->M_wa->getKeyword('greet')->message]);
-            $arrButton=[["type"=>"REPLY","title"=>"Dokumen","id"=>1],["type"=>"REPLY","title"=>"Tanya","id"=>2]];
             $this->sendInteractiveBtn($no,$this->M_wa->getKeyword('greet')->message,$arrButton);
         }
         else if(in_array($input, $arrDoc))
@@ -127,8 +128,6 @@ class Wa extends CI_Controller
         }
         else {
             // Exception jika keyword tidak dikenali, akan memunculkan menu
-
-            $arrButton=[["type"=>"REPLY","title"=>"Dokumen","id"=>1],["type"=>"REPLY","title"=>"Tanya","id"=>2]];
             $this->sendInteractiveBtn($no,$this->M_wa->getKeyword('greet')->message,$arrButton);
         }
     }
