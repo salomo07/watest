@@ -78,7 +78,7 @@ class Wa extends CI_Controller
         $now=new DateTime('NOW');
         $arrCall = array("call", "hubungi", "petugas", "hubungi petugas adira finance","chat","cs","tanya","tanya cs");
         $arrGreet = array("hai", "halo","hallo","selamat pagi", "selamat siang","selamat sore","selamat malam","menu","hi");
-        $arrCall = array("call", "hubungi", "petugas", "hubungi petugas adira finance","chat","cs","tanya","tanya cs");
+        $arrCall = array("call", "hubungi", "petugas", "hubungi petugas adira finance","chat","cs","tanya","tanya cs","info jadwal");
         $arrDoc = array("dok", "dokumen");
         $arrButton=[["type"=>"REPLY","title"=>"Dokumen","id"=>1],["type"=>"REPLY","title"=>"Tanya","id"=>2],["type"=>"REPLY","title"=>"Info Jadwal","id"=>3]];
         if(in_array($input, $arrCall)) // Jika pesan berisi keyword seperti dalam array
