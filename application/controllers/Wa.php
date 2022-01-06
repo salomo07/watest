@@ -20,7 +20,7 @@ class Wa extends CI_Controller
     }
 
     function index(){
-        echo substr("Namanya juga usaha",0,150).' ';
+        // echo substr("Namanya juga usaha",0,150).' ';
         echo 'This controller for WhatsApp usage';
         
     }
@@ -31,18 +31,17 @@ class Wa extends CI_Controller
             $this->load->view('conversation',$data);   
         }        
     }
-    function blastPengajuanECom(){
-        if(isset($_GET['no']))
-        {
-
-        }      
-    }
     public function formatingNumber($no){
         if(substr($no, 0, 2)=="62"){return $no;}
         else{return "62".substr($no, 1);}
     }
+    public function kirim() {
+        $this->sendingTextMsg2($_GET['to'],$_GET['text']);
+    }
     public function sendingTextMsg($to,$text) {
-        $ch = curl_init($this->BASE_URL.'whatsapp/1/message/text');
+        // $ch = curl_init($this->BASE_URL.'whatsapp/1/message/text');
+        $ch = curl_init('http://10.91.3.135:8000/api/i5/infobip/v1/sendwatext');
+
         curl_setopt($ch, CURLOPT_HTTPHEADER, array(
             'Authorization: App '.$this->API_KEY,
             'Content-Type: application/json'
@@ -57,22 +56,47 @@ class Wa extends CI_Controller
             // echo json_encode($e);
         }
     }
-    public function sendingTemplateMsg($to,$text) {
-        $ch = curl_init($this->BASE_URL.'whatsapp/1/message/template');
-        curl_setopt($ch, CURLOPT_HTTPHEADER, array(
-            'Authorization: App '.$this->API_KEY,
-            'Content-Type: application/json'
-        ));
+    public function sendingTextMsg2($to,$text) {
+            $curl = curl_init();
+            // echo bin2hex(openssl_random_pseudo_bytes(10));
+            curl_setopt_array($curl, array(
+            CURLOPT_URL => 'http://10.91.3.135:8000/api/i5/infobip/v1/sendwatext',
+              CURLOPT_RETURNTRANSFER => true,
+              CURLOPT_ENCODING => '',
+              CURLOPT_MAXREDIRS => 10,
+              CURLOPT_TIMEOUT => 0,
+              CURLOPT_FOLLOWLOCATION => true,
+              CURLOPT_HTTP_VERSION => CURL_HTTP_VERSION_1_1,
+              CURLOPT_CUSTOMREQUEST => 'POST',
+              CURLOPT_POSTFIELDS =>'{
+                "header": {
+                    "requestId": "CC-20201215000000707900011",
+                    "requestTimestamp": "'.date("Y-m-d H:i:s").'",
+                    "costGrp": "CONTACTCENTER",
+                    "appNo": "12345667890",
+                    "channelId": "CONTACTCENTER"
+                },
+                "data": {
+                    "from": "6281119308391",
+                    "to": "'.$to.'",
+                    "content": {
+                        "text": "'.$text.'"
+                    }
+                }
+            }',
+              CURLOPT_HTTPHEADER => array(
+                'AF-API-KEY: 4e8DKClsh4v0Q5jemKIP2eY8VI6Q2cf9',
+                'Authorization: App 462b80fba7b8deef462d418ef369b16d-0c0b7b03-64a7-4b00-8688-49e0ae918928',
+                'Content-Type: application/json'
+              ),
+            ));
 
-        curl_setopt($ch, CURLOPT_POST ,TRUE);
-        curl_setopt($ch, CURLOPT_POSTFIELDS ,json_encode(["from"=>$this->ADIRA_NUMBER,"to"=>$this->formatingNumber($to),"content"=>["templateName"=>$text]]));
-        try{
-            $result=curl_exec($ch);
-        }
-        catch(Exception $e){
-            // echo json_encode($e);
-        }
+            $response = curl_exec($curl);
+
+            curl_close($curl);
+            echo $response;
     }
+
     public function tree($input,$no) {
         $input=strtolower(urldecode($input));
         $now=new DateTime('NOW');
@@ -184,7 +208,7 @@ class Wa extends CI_Controller
             $data=json_decode(file_get_contents('php://input'))->results;
             foreach ($data as $val) {
                 $msg= $val->message;
-                $allowedType = array("TEXT","IMAGE","DOCUMENT","INTERACTIVE_BUTTON_REPLY");
+                $allowedType = array("TEXT","IMAGE","DOCUMENT","INTERACTIVE_BUTTON_REPLY","QUICK_REPLY");
                 
                 if(!in_array($msg->type, $allowedType))
                 {
@@ -195,6 +219,9 @@ class Wa extends CI_Controller
                     $session=$this->M_wa->checkActiveConversation($val->from);
                     if($msg->type=="INTERACTIVE_BUTTON_REPLY"){
                         $this->tree($msg->title,$val->from);
+                    }
+                    if($msg->type=="QUICK_REPLY"){
+                        $this->sendingTextMsg($this->formatingNumber($val->from),"Anda memilih menu : ".$val->message);
                     }
                     else if($msg->type=="TEXT")
                     {                        
@@ -240,4 +267,76 @@ class Wa extends CI_Controller
         $this->M_wa->updateConversation(["number"=>$_GET['no'],"nik"=>$_GET['nik'],"endtime"=>$now->format('c')]);
         $this->sendingTextMsg($this->formatingNumber($_GET['no']),$this->M_wa->getKeyword('end')->message);
     }    
+    public function sendBlastKonfirmasiJadwal(){
+        if(!isset($_GET['campaign'])){die();}
+        $res=$this->M_wa->getAllBlast($_GET['campaign']);
+        foreach ($res as $value) {
+            if($value->destination_number!=null && $value->customer_name!=null)
+            {
+            // $this->sendTemplate($this->formatingNumber($value->destination_number),'telecenter_1',[$value->customer_name,$_GET['campaign']],"Konfirmasi Jadwal");
+            // $this->M_wa->insertWASended(["campaign"=>$_GET['campaign'],"no"=>$value->destination_number,"status"=>"sending","time"=>date()]);
+            }
+        }
+        $this->sendTemplate($this->formatingNumber('081288643757'),'telecenter_1',["Sule Prikitiwwww",$_GET['campaign']],"Konfirmasi Jadwal");
+        $this->M_wa->insertWASended(["campaign"=>$_GET['campaign'],"no"=>'081288643757',"status"=>"sending","time"=>date("Y-m-d H:i:s")]);
+    }
+    
+    public function sendTemplate($to,$templateName,$placeHolder,$parameterButton){
+        $curl = curl_init();
+
+        curl_setopt_array($curl, array(
+          CURLOPT_URL => 'http://10.91.3.135:8000/api/i5/infobip/v1/sendTemplateWa',
+          CURLOPT_RETURNTRANSFER => true,
+          CURLOPT_ENCODING => '',
+          CURLOPT_MAXREDIRS => 10,
+          CURLOPT_TIMEOUT => 0,
+          CURLOPT_FOLLOWLOCATION => true,
+          CURLOPT_HTTP_VERSION => CURL_HTTP_VERSION_1_1,
+          CURLOPT_CUSTOMREQUEST => 'POST',
+          CURLOPT_POSTFIELDS =>'{
+            "header": {
+                "requestId": "CC-20201215000000707900011",
+                "requestTimestamp": "2021-10-05 17:09:14",
+                "costGrp": "CONTACTCENTER",
+                "appNo": "12345667890",
+                "channelId": "CONTACTCENTER"
+            },
+            "data": {
+                "messages": [
+                    {
+                        "from": "6281119308391",
+                        "to":'.$to.',
+                        "content": {
+                            "templateName": "'.$templateName.'",
+                            "templateData": {
+                                "body": {
+                                    "placeholders": '.json_encode($placeHolder).'
+                                },
+                                "buttons": [
+                                {
+                                "type": "QUICK_REPLY",
+                                "parameter": "'.$parameterButton.'"
+                                }
+                                ]
+                            },
+
+                            "language": "id"
+                        },
+                        "callbackData": "Callback data"
+                    }
+                ]
+            }
+        }',
+          CURLOPT_HTTPHEADER => array(
+            'Authorization: App 462b80fba7b8deef462d418ef369b16d-0c0b7b03-64a7-4b00-8688-49e0ae918928',
+            'AF-API-KEY: 4e8DKClsh4v0Q5jemKIP2eY8VI6Q2cf9',
+            'Content-Type: application/json'
+          ),
+        ));
+
+        $response = curl_exec($curl);
+
+        curl_close($curl);
+        echo $response;
+    }
 }
